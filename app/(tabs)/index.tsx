@@ -31,12 +31,13 @@ export default function Index() {
   const [searchQuery, setSearchQuery] = useState("");
   const [receiptNumber, setReceiptNumber] = useState("");
   const [merchantName, setMerchantName] = useState("");
-  const [searchMode, setSearchMode] = useState("personal"); // "personal" or "car"
-  const [isLoading, setIsLoading] = useState(false);
+  const [searchMode, setSearchMode] = useState("car"); // "personal" or "car"
+  const [isLoading, setIsLoading] = useState(true);
   const [protocolData, setProtocolData] = useState<ProtocolData | null>(null);
 
   // Function to fetch all protocols (default)
   const fetchAllProtocols = async () => {
+    console.log("Starting to fetch all protocols...");
     setIsLoading(true);
     try {
       const response = await fetch("https://police.ge/protocol/index.php?url=protocols", {
@@ -72,6 +73,7 @@ export default function Index() {
       }
       
       if (data.success && data.data) {
+        console.log("Fetched all protocols successfully:", data.data.count, "items");
         setProtocolData(data.data);
       } else {
         console.error("API returned error:", data.message);
@@ -165,7 +167,8 @@ export default function Index() {
     setReceiptNumber("");
     setMerchantName("");
     setSearchQuery("");
-    setProtocolData(null);
+    // Reload all protocols when clearing
+    fetchAllProtocols();
   };
 
     // Function to search by car number
@@ -423,7 +426,7 @@ export default function Index() {
             borderTopLeftRadius: 8,
             borderTopRightRadius: 8,
           }}>
-            {searchMode === "car" && protocolData ? (
+            {protocolData?.results && protocolData.results.length > 0 ? (
               <>
                 <Text style={{ flex: 2, fontWeight: "600", color: "#495057" }}>პროტოკოლის №</Text>
                 <Text style={{ flex: 2, fontWeight: "600", color: "#495057" }}>თარიღი</Text>
@@ -443,8 +446,8 @@ export default function Index() {
           </View>
 
           {/* Table Rows */}
-          {searchMode === "car" && protocolData?.results ? (
-            // Show protocol data
+          {protocolData?.results && protocolData.results.length > 0 ? (
+            // Show protocol data for both search modes
             protocolData.results.map((protocol, index) => (
               <View
                 key={protocol.protocolNo}
@@ -473,21 +476,32 @@ export default function Index() {
                 </Text>
               </View>
             ))
-          ) : searchMode === "car" && protocolData?.results?.length === 0 ? (
-            // No results found for car search
+          ) : protocolData?.results?.length === 0 ? (
+            // No results found for any search
             <View style={{ paddingVertical: 30, alignItems: "center" }}>
               <Text style={{ color: "#28a745", fontSize: 16 }}>✅ ჯარიმები არ არის ნაპოვნი</Text>
               <Text style={{ color: "#666", fontSize: 12, marginTop: 5 }}>
-                ამ ავტომობილის ნომერზე აქტიური ჯარიმები არ არის
+                {searchMode === "car" ? "ამ ავტომობილის ნომერზე აქტიური ჯარიმები არ არის" : "მონაცემები არ არის ნაპოვნი"}
               </Text>
             </View>
-          ) : protocolData === null ? (
-            // Initial state - no search performed yet
+          ) : (!protocolData || (protocolData && !isLoading && protocolData.results?.length === 0 && !receiptNumber.trim())) ? (
+            // Loading or initial state
             <View style={{ paddingVertical: 30, alignItems: "center" }}>
-              <Text style={{ color: "#666", fontSize: 16 }}>🔍 ძიების შესასრულებლად</Text>
-              <Text style={{ color: "#666", fontSize: 12, marginTop: 5 }}>
-                შეიყვანეთ ავტომობილის სახელმწიფო ნომერი და დააჭირეთ ძიებას
-              </Text>
+              {isLoading ? (
+                <>
+                  <Text style={{ color: "#666", fontSize: 16 }}>⏳ მონაცემების ჩატვირთვა...</Text>
+                  <Text style={{ color: "#666", fontSize: 12, marginTop: 5 }}>
+                    გთხოვთ მოიცადოთ
+                  </Text>
+                </>
+              ) : (
+                <>
+                  <Text style={{ color: "#666", fontSize: 16 }}>🔍 ძიების შესასრულებლად</Text>
+                  <Text style={{ color: "#666", fontSize: 12, marginTop: 5 }}>
+                    შეიყვანეთ ავტომობილის სახელმწიფო ნომერი და დააჭირეთ ძიებას
+                  </Text>
+                </>
+              )}
             </View>
           ) : (
             // Empty results for other cases
