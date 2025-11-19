@@ -1,7 +1,7 @@
 import { ApiResponse } from '@/types/api';
 
 const API_CAR_SEARCH_URLS = [
-  'http://192.168.1.27:3001/api/receipt-by-car',  // Your network IP
+  'http://192.168.3.3:3001/api/receipt-by-car',  // Your network IP
   'http://10.0.2.2:3001/api/receipt-by-car',      // Android emulator
   'http://localhost:3001/api/receipt-by-car'       // Fallback
 ];
