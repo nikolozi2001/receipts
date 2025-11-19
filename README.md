@@ -1,50 +1,91 @@
-# Welcome to your Expo app 👋
+# Receipt Management App 🧾
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern React Native app built with Expo for managing digital receipts and protocol data. Features a clean, responsive UI and robust state management.
 
-## Get started
+## ✨ Features
 
-1. Install dependencies
+- **📱 Cross-platform**: Works on iOS, Android, and Web
+- **🔍 Smart Search**: Search by car number or personal data
+- **🎨 Modern UI**: Clean design with NativeWind/Tailwind CSS
+- **⚡ Fast Performance**: Optimized state management with Zustand
+- **🛡️ Type Safety**: Full TypeScript implementation
+- **🧪 Tested**: Comprehensive test coverage
+- **♿ Accessible**: Screen reader friendly
 
-   ```bash
-   npm install
-   ```
+## 🚀 Quick Start
 
-2. Start the app
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Expo CLI
+- iOS Simulator (Mac) or Android Emulator
 
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Installation
 
 ```bash
-npm run reset-project
+# Install dependencies
+npm install
+
+# Start the development server
+npm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Development Commands
 
-## Learn more
+```bash
+# Start development server
+npm start
 
-To learn more about developing your project with Expo, look at the following resources:
+# Run on iOS simulator
+npm run ios
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# Run on Android emulator  
+npm run android
 
-## Join the community
+# Run on web browser
+npm run web
 
-Join our community of developers creating universal apps.
+# Run tests
+npm test
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+# Type checking
+npm run type-check
+
+# Linting
+npm run lint
+```
+
+## 🏗️ Architecture
+
+This app follows modern React Native best practices with:
+
+- **Component-based Architecture**: Modular, reusable components
+- **State Management**: Zustand for predictable state updates
+- **API Layer**: Dedicated service layer for backend communication
+- **Type Safety**: TypeScript throughout the application
+- **Error Handling**: Comprehensive error boundaries and validation
+- **Testing**: Jest and React Native Testing Library
+
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed documentation.
+
+## 📦 Core Dependencies
+
+- **React Native**: 0.81.5
+- **Expo**: ~54.0.24
+- **TypeScript**: ~5.9.2
+- **Zustand**: ^5.0.8 - State management
+- **NativeWind**: ^4.2.1 - Styling
+- **Expo Router**: ~6.0.15 - Navigation
+
+## 🔮 Roadmap
+
+- [ ] Offline support with local caching
+- [ ] Push notifications  
+- [ ] Export functionality (PDF/Excel)
+- [ ] Advanced filtering options
+- [ ] Dark mode theme
+- [ ] Multi-language support
+
+---
+
+Made with ❤️ using React Native and Expo

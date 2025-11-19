@@ -1,29 +1,73 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  // NOTE: Update this to include the paths to all files that contain Nativewind classes.
-  content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    "./app/**/*.{js,jsx,ts,tsx}", 
+    "./components/**/*.{js,jsx,ts,tsx}",
+    "./hooks/**/*.{js,jsx,ts,tsx}",
+    "./services/**/*.{js,jsx,ts,tsx}",
+    "./utils/**/*.{js,jsx,ts,tsx}"
+  ],
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
-      // Example: Adding custom colors
       colors: {
-        primary: "#030014",
-        accent: "#AB8BFF",
-        light: {
-          100: "#D6C6FF",
-          200: "#A8B5DB",
-          300: "#9CA4AB",
+        primary: "#1e5099",
+        secondary: "#e8f0fe",
+        success: "#28a745",
+        error: "#dc3545",
+        warning: "#ffc107",
+        info: "#17a2b8",
+        light: "#f8f9fa",
+        dark: "#343a40",
+        gray: {
+          50: "#f9fafb",
+          100: "#f3f4f6",
+          200: "#e5e7eb",
+          300: "#d1d5db",
+          400: "#9ca3af",
+          500: "#6b7280",
+          600: "#4b5563",
+          700: "#374151",
+          800: "#1f2937",
+          900: "#111827",
         },
-        dark: {
-          100: "#221F3D",
-          200: "#0F0D23",
-          300: "#3A3A3A",
+        blue: {
+          50: "#eff6ff",
+          100: "#dbeafe",
+          200: "#bfdbfe",
+          300: "#93c5fd",
+          400: "#60a5fa",
+          500: "#3b82f6",
+          600: "#1e5099", // Primary blue
+          700: "#1d4ed8",
+          800: "#1e40af",
+          900: "#1e3a8a",
         },
       },
-      // Example: Adding custom font sizes
       fontSize: {
-        xxs: "0.625rem", // 10px
-        xxl: "1.5rem",   // 24px
+        xs: "0.75rem",
+        sm: "0.875rem",
+        base: "1rem",
+        lg: "1.125rem",
+        xl: "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem",
+      },
+      spacing: {
+        '15': '3.75rem',
+        '18': '4.5rem',
+        '25': '6.25rem',
+      },
+      borderRadius: {
+        'none': '0',
+        'sm': '0.125rem',
+        DEFAULT: '0.25rem',
+        'md': '0.375rem',
+        'lg': '0.5rem',
+        'xl': '0.75rem',
+        '2xl': '1rem',
+        'full': '9999px',
       },
     },
   },
