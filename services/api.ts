@@ -1,10 +1,7 @@
 import { ApiResponse } from '@/types/api';
 
-const API_CAR_SEARCH_URLS = [
-  'http://192.168.3.3:3001/api/receipt-by-car',  // Your network IP
-  'http://10.0.2.2:3001/api/receipt-by-car',      // Android emulator
-  'http://localhost:3001/api/receipt-by-car'       // Fallback
-];
+// Your single API endpoint
+const API_URL = 'http://192.168.3.3:3001/api/receipt-by-car';
 
 class ApiService {
   private async makeRequest(url: string, options: RequestInit = {}): Promise<ApiResponse> {
@@ -65,96 +62,77 @@ class ApiService {
 
   async searchByCarNumber(carNumber: string): Promise<ApiResponse> {
     console.log('Searching by car number:', carNumber);
+    console.log('Using API URL:', API_URL);
     
-    // Try multiple URLs for React Native compatibility
-    for (const url of API_CAR_SEARCH_URLS) {
-      console.log('Attempting to connect to proxy server at:', url);
+    try {
+      // Add timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
       
-      try {
-        // Add timeout to prevent hanging
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout per URL
-        
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json' 
-          },
-          body: JSON.stringify({ 
-            carNumber: carNumber.trim().toUpperCase() 
-          }),
-          signal: controller.signal
-        });
-        
-        clearTimeout(timeoutId);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('✅ Proxy response received from', url, ':', data);
-        
-        // Handle the proxy response format you specified
-        if (data && typeof data === 'object' && 'success' in data) {
-          if (data.success && data.data && data.data.results) {
-            console.log('✅ Found', data.data.results.length, 'violations');
-            return {
-              success: true,
-              message: data.message || 'წარმატებით ჩაიტვირთა',
-              data: {
-                count: data.data.results.length,
-                results: data.data.results
-              }
-            };
-          } else {
-            return {
-              success: true,
-              message: 'ჯარიმები არ მოიძებნა',
-              data: { count: 0, results: [] }
-            };
-          }
-        }
-        
-        return {
-          success: false,
-          message: 'არასწორი რესპონსის ფორმატი',
-          data: { count: 0, results: [] }
-        };
-        
-      } catch (error) {
-        console.warn(`Failed to connect to ${url}:`, error instanceof Error ? error.message : 'Unknown error');
-        
-        // If this is the last URL, return the error
-        if (url === API_CAR_SEARCH_URLS[API_CAR_SEARCH_URLS.length - 1]) {
-          console.error('All proxy URLs failed');
-          
-          if (error instanceof Error && error.name === 'AbortError') {
-            return {
-              success: false,
-              message: 'სერვერთან კავშირი ვერ დამყარდა (timeout)',
-              data: { count: 0, results: [] }
-            };
-          }
-          
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({ 
+          carNumber: carNumber.trim().toUpperCase() 
+        }),
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('✅ API response received:', data);
+      
+      // Handle the response format
+      if (data && typeof data === 'object' && 'success' in data) {
+        if (data.success && data.data && data.data.results) {
+          console.log('✅ Found', data.data.results.length, 'violations');
           return {
-            success: false,
-            message: '❌ პროქსი სერვერი მიუწვდომელია. დარწმუნდით რომ სერვერი მუშაობს port 3001-ზე',
+            success: true,
+            message: data.message || 'წარმატებით ჩაიტვირთა',
+            data: {
+              count: data.data.results.length,
+              results: data.data.results
+            }
+          };
+        } else {
+          return {
+            success: true,
+            message: 'ჯარიმები არ მოიძებნა',
             data: { count: 0, results: [] }
           };
         }
-        
-        // Continue to next URL
-        continue;
       }
+      
+      return {
+        success: false,
+        message: 'არასწორი რესპონსის ფორმატი',
+        data: { count: 0, results: [] }
+      };
+      
+    } catch (error) {
+      console.error('API Error:', error);
+      
+      if (error instanceof Error && error.name === 'AbortError') {
+        return {
+          success: false,
+          message: 'სერვერთან კავშირი ვერ დამყარდა (timeout)',
+          data: { count: 0, results: [] }
+        };
+      }
+      
+      return {
+        success: false,
+        message: '❌ სერვერი მიუწვდომელია. შეამოწმეთ ინტერნეტ კავშირი',
+        data: { count: 0, results: [] }
+      };
     }
-    
-    // This should never be reached, but just in case
-    return {
-      success: false,
-      message: 'უცნობი შეცდომა',
-      data: { count: 0, results: [] }
-    };
   }
 
   async searchByPersonalData(personalId: string, surname: string, birthDate: string): Promise<ApiResponse> {
