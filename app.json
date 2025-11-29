@@ -4,7 +4,7 @@
     "slug": "receipts",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/shss.webp",
+    "icon": "./assets/images/shss.png",
     "scheme": "receipts",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -44,7 +44,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/shss.webp",
+          "image": "./assets/images/shss.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",

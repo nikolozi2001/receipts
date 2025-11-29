@@ -31,7 +31,7 @@ export function Header({ title, subtitle, lastUpdated }: HeaderProps) {
         {/* Left SHSS Logo */}
         <View style={{ alignItems: 'flex-start', marginRight: SPACING.lg }}>
           <Image
-            source={require('../../assets/images/shss.webp')}
+            source={require('../../assets/images/shss.png')}
             style={{
               width: 60,
               height: 60,
