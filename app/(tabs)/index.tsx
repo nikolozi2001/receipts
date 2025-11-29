@@ -11,10 +11,14 @@ export default function Index() {
     protocolData,
     isLoading,
     error,
+    loadingState,
+    errorState,
     searchForm,
     updateSearchForm,
     handleSearch,
     handleClear,
+    handleRetry,
+    clearError,
   } = useProtocolData();
 
   return (
@@ -39,9 +43,13 @@ export default function Index() {
         <SearchForm
           formData={searchForm}
           isLoading={isLoading}
+          loadingState={loadingState}
+          errorState={errorState}
           onUpdateForm={updateSearchForm}
           onSearch={handleSearch}
           onClear={handleClear}
+          onRetry={handleRetry}
+          clearError={clearError}
         />
 
         <ResultsTable

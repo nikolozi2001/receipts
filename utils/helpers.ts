@@ -1,3 +1,5 @@
+import { VALIDATION } from '@/constants';
+
 /**
  * Format date string to a more readable format
  */
@@ -28,9 +30,7 @@ export const formatCurrency = (amount: number): string => {
  */
 export const validateCarNumber = (carNumber: string): boolean => {
   if (!carNumber.trim()) return false;
-  // Georgian car number format: AA-123-AA or similar patterns
-  const georgianCarPattern = /^[A-Za-zა-ჰ]{1,3}-?\d{2,4}-?[A-Za-zა-ჰ]{1,3}$|^\d{2,4}[A-Za-zა-ჰ]{1,3}$/;
-  return georgianCarPattern.test(carNumber.trim());
+  return VALIDATION.CAR_NUMBER.test(carNumber.trim());
 };
 
 /**
@@ -38,9 +38,7 @@ export const validateCarNumber = (carNumber: string): boolean => {
  */
 export const validatePersonalId = (personalId: string): boolean => {
   if (!personalId.trim()) return false;
-  // Georgian personal ID: 11 digits
-  const personalIdPattern = /^\d{11}$/;
-  return personalIdPattern.test(personalId.trim());
+  return VALIDATION.PERSONAL_ID.test(personalId.trim());
 };
 
 /**
@@ -55,4 +53,57 @@ export const formatCarNumber = (carNumber: string): string => {
  */
 export const hasSearchQuery = (searchForm: { receiptNumber: string; merchantName: string; searchQuery: string }): boolean => {
   return !!(searchForm.receiptNumber.trim() || searchForm.merchantName.trim() || searchForm.searchQuery.trim());
+};
+
+/**
+ * Validate birth date format and value
+ */
+export const validateBirthDate = (birthDate: string): { isValid: boolean; error?: string } => {
+  if (!birthDate.trim()) {
+    return { isValid: false, error: 'შეიყვანეთ დაბადების თარიღი' };
+  }
+
+  const datePattern = /^\d{2}\/\d{2}\/\d{4}$/;
+  if (!datePattern.test(birthDate.trim())) {
+    return { isValid: false, error: 'გამოიყენეთ ფორმატი: DD/MM/YYYY' };
+  }
+
+  const [day, month, year] = birthDate.trim().split('/').map(Number);
+  
+  if (month < 1 || month > 12) {
+    return { isValid: false, error: 'არასწორი თვე (1-12)' };
+  }
+
+  if (day < 1 || day > 31) {
+    return { isValid: false, error: 'არასწორი დღე (1-31)' };
+  }
+
+  const currentYear = new Date().getFullYear();
+  if (year < 1900 || year > currentYear) {
+    return { isValid: false, error: `არასწორი წელი (1900-${currentYear})` };
+  }
+
+  // Additional validation for day/month combinations
+  const daysInMonth = new Date(year, month, 0).getDate();
+  if (day > daysInMonth) {
+    return { isValid: false, error: `ამ თვეში ${daysInMonth} დღეა` };
+  }
+
+  return { isValid: true };
+};
+
+/**
+ * Format personal ID for display
+ */
+export const formatPersonalId = (personalId: string): string => {
+  const clean = personalId.replace(/\D/g, '');
+  return clean.substring(0, 11);
+};
+
+/**
+ * Check if error is network related
+ */
+export const isNetworkError = (error: string): boolean => {
+  const networkKeywords = ['network', 'connection', 'timeout', 'fetch', 'internet'];
+  return networkKeywords.some(keyword => error.toLowerCase().includes(keyword));
 };

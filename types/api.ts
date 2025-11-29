@@ -22,6 +22,21 @@ export interface ApiResponse {
   success: boolean;
   message: string | null;
   data: ProtocolData;
+  isLoading?: boolean;
+  retryCount?: number;
+}
+
+export interface LoadingState {
+  isLoading: boolean;
+  loadingMessage: string;
+  progress?: number;
+}
+
+export interface ErrorState {
+  hasError: boolean;
+  errorMessage: string;
+  canRetry: boolean;
+  retryCount: number;
 }
 
 export interface SearchFormData {

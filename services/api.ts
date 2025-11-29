@@ -1,53 +1,129 @@
 import { ApiResponse } from '@/types/api';
 
-// Your single API endpoint
-const API_URL = 'http://192.168.3.3:3001/api/receipt-by-car';
+// API configuration - inline to avoid import issues
+const API_BASE_URL = __DEV__ ? 'http://192.168.3.3:3001' : 'https://api.police.ge';
+const API_TIMEOUT = 10000;
+const RETRY_ATTEMPTS = 3;
+const ENDPOINTS = {
+  CAR_SEARCH: '/api/receipt-by-car',
+  PERSONAL_SEARCH: '/api/receipt-by-personal',
+  ALL_PROTOCOLS: '/api/protocols'
+};
+
+// Error messages in Georgian
+const ERROR_MESSAGES = {
+  NETWORK_ERROR: 'ინტერნეტ კავშირი არ არის ხელმისაწვდომი',
+  SERVER_ERROR: 'სერვერთან კავშირის პრობლემა',
+  TIMEOUT_ERROR: 'მოთხოვნის დრო ამოიწურა',
+  INVALID_INPUT: 'შეიყვანეთ სწორი მონაცემები',
+  NO_DATA: 'მონაცემები არ მოიძებნა',
+  VALIDATION_ERROR: 'მონაცემების ვალიდაცია ვერ მოხერხდა'
+};
+
+// Success messages
+const SUCCESS_MESSAGES = {
+  DATA_LOADED: 'მონაცემები წარმატებით ჩაიტვირთა',
+  SEARCH_COMPLETED: 'ძიება წარმატებით დასრულდა'
+};
 
 class ApiService {
-  private async makeRequest(url: string, options: RequestInit = {}): Promise<ApiResponse> {
+  private async makeRequestWithRetry(url: string, options: RequestInit = {}, retryCount = 0): Promise<ApiResponse> {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
+      
       const response = await fetch(url, {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
+        signal: controller.signal,
         ...options,
       });
+      
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        if (response.status >= 500 && retryCount < RETRY_ATTEMPTS) {
+          console.log(`Server error, retrying... (${retryCount + 1}/${RETRY_ATTEMPTS})`);
+          await this.delay(1000 * (retryCount + 1)); // Exponential backoff
+          return this.makeRequestWithRetry(url, options, retryCount + 1);
+        }
+        throw new Error(this.getErrorMessage(response.status));
       }
 
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        console.log('API returned non-JSON response');
         return {
           success: false,
-          message: 'Invalid response format',
+          message: ERROR_MESSAGES.SERVER_ERROR,
           data: { count: 0, results: [] }
         };
       }
 
-      const text = await response.text();
-      try {
-        return JSON.parse(text) as ApiResponse;
-      } catch (parseError) {
-        console.error('JSON Parse Error:', parseError);
-        console.log('Response text:', text.substring(0, 200));
+      const data = await response.json();
+      return data as ApiResponse;
+      
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
         return {
           success: false,
-          message: 'Failed to parse response',
+          message: ERROR_MESSAGES.TIMEOUT_ERROR,
           data: { count: 0, results: [] }
         };
       }
-    } catch (error) {
+      
+      if (retryCount < RETRY_ATTEMPTS && this.isRetryableError(error)) {
+        console.log(`Network error, retrying... (${retryCount + 1}/${RETRY_ATTEMPTS})`);
+        await this.delay(1000 * (retryCount + 1));
+        return this.makeRequestWithRetry(url, options, retryCount + 1);
+      }
+      
       console.error('API Error:', error);
       return {
         success: false,
-        message: error instanceof Error ? error.message : 'Unknown error occurred',
+        message: this.getNetworkErrorMessage(error),
         data: { count: 0, results: [] }
       };
     }
+  }
+  
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+  private isRetryableError(error: unknown): boolean {
+    if (error instanceof Error) {
+      return error.message.includes('fetch') || 
+             error.message.includes('network') ||
+             error.message.includes('connection');
+    }
+    return false;
+  }
+  
+  private getErrorMessage(status: number): string {
+    switch (status) {
+      case 400: return 'არასწორი მოთხოვნა';
+      case 401: return 'ავტორიზაცია საჭიროა';
+      case 403: return 'წვდომა აკრძალულია';
+      case 404: return 'მონაცემები არ მოიძებნა';
+      case 429: return 'ძალიან ბევრი მოთხოვნა, სცადეთ მოგვიანებით';
+      case 500: return ERROR_MESSAGES.SERVER_ERROR;
+      default: return ERROR_MESSAGES.NETWORK_ERROR;
+    }
+  }
+  
+  private getNetworkErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+      if (error.message.includes('fetch')) {
+        return ERROR_MESSAGES.NETWORK_ERROR;
+      }
+    }
+    return ERROR_MESSAGES.SERVER_ERROR;
+  }
+  
+  private async makeRequest(url: string, options: RequestInit = {}): Promise<ApiResponse> {
+    return this.makeRequestWithRetry(url, options, 0);
   }
 
   async getAllProtocols(): Promise<ApiResponse> {
@@ -61,88 +137,127 @@ class ApiService {
   }
 
   async searchByCarNumber(carNumber: string): Promise<ApiResponse> {
-    console.log('Searching by car number:', carNumber);
-    console.log('Using API URL:', API_URL);
-    
-    try {
-      // Add timeout to prevent hanging
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-      
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json' 
-        },
-        body: JSON.stringify({ 
-          carNumber: carNumber.trim().toUpperCase() 
-        }),
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log('✅ API response received:', data);
-      
-      // Handle the response format
-      if (data && typeof data === 'object' && 'success' in data) {
-        if (data.success && data.data && data.data.results) {
-          console.log('✅ Found', data.data.results.length, 'violations');
-          return {
-            success: true,
-            message: data.message || 'წარმატებით ჩაიტვირთა',
-            data: {
-              count: data.data.results.length,
-              results: data.data.results
-            }
-          };
-        } else {
-          return {
-            success: true,
-            message: 'ჯარიმები არ მოიძებნა',
-            data: { count: 0, results: [] }
-          };
-        }
-      }
-      
+    if (!carNumber || !carNumber.trim()) {
       return {
         success: false,
-        message: 'არასწორი რესპონსის ფორმატი',
-        data: { count: 0, results: [] }
-      };
-      
-    } catch (error) {
-      console.error('API Error:', error);
-      
-      if (error instanceof Error && error.name === 'AbortError') {
-        return {
-          success: false,
-          message: 'სერვერთან კავშირი ვერ დამყარდა (timeout)',
-          data: { count: 0, results: [] }
-        };
-      }
-      
-      return {
-        success: false,
-        message: '❌ სერვერი მიუწვდომელია. შეამოწმეთ ინტერნეტ კავშირი',
+        message: ERROR_MESSAGES.INVALID_INPUT,
         data: { count: 0, results: [] }
       };
     }
+    
+    const cleanCarNumber = carNumber.trim().toUpperCase();
+    console.log('Searching by car number:', cleanCarNumber);
+    
+    const url = `${API_BASE_URL}${ENDPOINTS.CAR_SEARCH}`;
+    console.log('Using API URL:', url);
+    
+    const response = await this.makeRequest(url, {
+      method: 'POST',
+      body: JSON.stringify({ 
+        carNumber: cleanCarNumber
+      })
+    });
+    
+    // Process successful response
+    if (response.success && response.data && response.data.results) {
+      if (response.data.results.length > 0) {
+        console.log('✅ Found', response.data.results.length, 'violations');
+        return {
+          success: true,
+          message: `${SUCCESS_MESSAGES.SEARCH_COMPLETED} - ნაპოვნია ${response.data.results.length} ჯარიმა`,
+          data: response.data
+        };
+      } else {
+        return {
+          success: true,
+          message: '✅ ამ ავტომობილზე აქტიური ჯარიმები არ არის',
+          data: { count: 0, results: [] }
+        };
+      }
+    }
+    
+    return response;
   }
 
   async searchByPersonalData(personalId: string, surname: string, birthDate: string): Promise<ApiResponse> {
-    console.log('Searching by personal data');
-    // This endpoint might not exist yet, but keeping it for future implementation
-    return {
-      success: false,
-      message: 'Personal search not implemented yet',
-      data: { count: 0, results: [] }
-    };
+    // Validate inputs
+    if (!personalId || !personalId.trim()) {
+      return {
+        success: false,
+        message: 'შეიყვანეთ პირადი ნომერი',
+        data: { count: 0, results: [] }
+      };
+    }
+    
+    if (!surname || !surname.trim()) {
+      return {
+        success: false,
+        message: 'შეიყვანეთ გვარი',
+        data: { count: 0, results: [] }
+      };
+    }
+    
+    if (!birthDate || !birthDate.trim()) {
+      return {
+        success: false,
+        message: 'შეიყვანეთ დაბადების თარიღი',
+        data: { count: 0, results: [] }
+      };
+    }
+    
+    // Validate personal ID format (Georgian personal ID is 11 digits)
+    const cleanPersonalId = personalId.trim();
+    if (!/^\d{11}$/.test(cleanPersonalId)) {
+      return {
+        success: false,
+        message: 'პირადი ნომერი უნდა შეიცავდეს 11 ციფრს',
+        data: { count: 0, results: [] }
+      };
+    }
+    
+    // Validate birth date format (DD/MM/YYYY)
+    const cleanBirthDate = birthDate.trim();
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(cleanBirthDate)) {
+      return {
+        success: false,
+        message: 'დაბადების თარიღი უნდა იყოს ფორმატში: DD/MM/YYYY',
+        data: { count: 0, results: [] }
+      };
+    }
+    
+    console.log('Searching by personal data:', { personalId: cleanPersonalId, surname: surname.trim(), birthDate: cleanBirthDate });
+    
+    const url = `${API_BASE_URL}${ENDPOINTS.PERSONAL_SEARCH}`;
+    console.log('Using API URL:', url);
+    
+    const response = await this.makeRequest(url, {
+      method: 'POST',
+      body: JSON.stringify({ 
+        personalId: cleanPersonalId,
+        surname: surname.trim(),
+        birthDate: cleanBirthDate
+      })
+    });
+    
+    // Process successful response
+    if (response.success && response.data && response.data.results) {
+      if (response.data.results.length > 0) {
+        console.log('✅ Found', response.data.results.length, 'violations for personal data');
+        return {
+          success: true,
+          message: `${SUCCESS_MESSAGES.SEARCH_COMPLETED} - ნაპოვნია ${response.data.results.length} ჯარიმა`,
+          data: response.data
+        };
+      } else {
+        return {
+          success: true,
+          message: '✅ მოცემულ მონაცემებზე აქტიური ჯარიმები არ არის',
+          data: { count: 0, results: [] }
+        };
+      }
+    }
+    
+    return response;
   }
 }
 

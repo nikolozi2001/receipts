@@ -1,12 +1,31 @@
+// App configuration constants
+export const CONFIG = {
+  API: {
+    BASE_URL: __DEV__ ? 'http://192.168.3.3:3001' : 'https://api.police.ge',
+    TIMEOUT: 10000,
+    RETRY_ATTEMPTS: 3,
+    ENDPOINTS: {
+      CAR_SEARCH: '/api/receipt-by-car',
+      PERSONAL_SEARCH: '/api/receipt-by-personal',
+      ALL_PROTOCOLS: '/api/protocols'
+    }
+  },
+  UI: {
+    DEBOUNCE_DELAY: 500,
+    ANIMATION_DURATION: 300
+  }
+};
+
+// Legacy support for existing code
 export const API_CONFIG = {
-  BASE_URL: 'https://police.ge/protocol/index.php?url=protocols',
+  BASE_URL: CONFIG.API.BASE_URL,
   ENDPOINTS: {
     ALL_PROTOCOLS: '',
     SEARCH_BY_CAR: '/searchByAuto',
-    SEARCH_BY_PERSON: '/searchByPersonal', // Future endpoint
+    SEARCH_BY_PERSON: '/searchByPersonal',
   },
-  TIMEOUT: 10000, // 10 seconds
-  RETRY_ATTEMPTS: 3,
+  TIMEOUT: CONFIG.API.TIMEOUT,
+  RETRY_ATTEMPTS: CONFIG.API.RETRY_ATTEMPTS,
 } as const;
 
 export const UI_CONFIG = {
@@ -47,3 +66,27 @@ export const VALIDATION = {
   PERSONAL_ID: /^\d{11}$/,
   MAX_SEARCH_HISTORY: 10,
 } as const;
+
+// Error messages in Georgian
+export const ERROR_MESSAGES = {
+  NETWORK_ERROR: 'ინტერნეტ კავშირი არ არის ხელმისაწვდომი',
+  SERVER_ERROR: 'სერვერთან კავშირის პრობლემა',
+  TIMEOUT_ERROR: 'მოთხოვნის დრო ამოიწურა',
+  INVALID_INPUT: 'შეიყვანეთ სწორი მონაცემები',
+  NO_DATA: 'მონაცემები არ მოიძებნა',
+  VALIDATION_ERROR: 'მონაცემების ვალიდაცია ვერ მოხერხდა'
+};
+
+// Success messages
+export const SUCCESS_MESSAGES = {
+  DATA_LOADED: 'მონაცემები წარმატებით ჩაიტვირთა',
+  SEARCH_COMPLETED: 'ძიება წარმატებით დასრულდა'
+};
+
+// Loading messages
+export const LOADING_MESSAGES = {
+  SEARCHING: 'მოძებნა...',
+  LOADING: 'იტვირთება...',
+  VALIDATING: 'ამოწმდება...',
+  CONNECTING: 'სერვერთან დაკავშირება...'
+};

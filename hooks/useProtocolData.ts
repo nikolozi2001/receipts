@@ -6,12 +6,16 @@ export function useProtocolData() {
     protocolData,
     isLoading,
     error,
+    loadingState,
+    errorState,
     searchForm,
     updateSearchForm,
     resetSearchForm,
     fetchAllProtocols,
     searchByCarNumber,
     searchByPersonalData,
+    retryLastSearch,
+    clearError
   } = useAppStore();
 
   // Load all protocols on mount
@@ -32,17 +36,26 @@ export function useProtocolData() {
   };
 
   const handleClear = () => {
+    clearError();
     resetSearchForm();
     fetchAllProtocols();
+  };
+  
+  const handleRetry = () => {
+    retryLastSearch();
   };
 
   return {
     protocolData,
     isLoading,
     error,
+    loadingState,
+    errorState,
     searchForm,
     updateSearchForm,
     handleSearch,
     handleClear,
+    handleRetry,
+    clearError
   };
 }

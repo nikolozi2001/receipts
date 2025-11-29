@@ -1,16 +1,60 @@
-import { SearchFormData } from '@/types/api';
+import { ErrorState, LoadingState, SearchFormData } from '@/types/api';
 import React from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+// Validation patterns inline to avoid import issues
+const VALIDATION = {
+  CAR_NUMBER: /^[A-Za-zა-ჰ]{1,3}-?\d{2,4}-?[A-Za-zა-ჰ]{1,3}$|^\d{2,4}[A-Za-zა-ჰ]{1,3}$/,
+  PERSONAL_ID: /^\d{11}$/,
+};
 
 interface SearchFormProps {
   formData: SearchFormData;
   isLoading: boolean;
+  loadingState: LoadingState;
+  errorState: ErrorState;
   onUpdateForm: (updates: Partial<SearchFormData>) => void;
   onSearch: () => void;
   onClear: () => void;
+  onRetry?: () => void;
+  clearError?: () => void;
 }
 
-export function SearchForm({ formData, isLoading, onUpdateForm, onSearch, onClear }: SearchFormProps) {
+export function SearchForm({ 
+  formData, 
+  isLoading, 
+  loadingState, 
+  errorState, 
+  onUpdateForm, 
+  onSearch, 
+  onClear, 
+  onRetry, 
+  clearError 
+}: SearchFormProps) {
+  
+  // Validation helpers
+  const validateCarNumber = (value: string): boolean => {
+    return VALIDATION.CAR_NUMBER.test(value.trim());
+  };
+  
+  const validatePersonalId = (value: string): boolean => {
+    return VALIDATION.PERSONAL_ID.test(value.trim());
+  };
+  
+  const canSearch = () => {
+    if (formData.searchMode === 'car') {
+      return formData.receiptNumber.trim().length > 0;
+    } else {
+      return formData.receiptNumber.trim().length > 0 && 
+             formData.merchantName.trim().length > 0 && 
+             formData.searchQuery.trim().length > 0;
+    }
+  };
+  
+  const handleSearch = () => {
+    clearError?.();
+    onSearch();
+  };
   return (
     <View style={{ paddingHorizontal: 24, paddingBottom: 24 }}>
       {/* Clean Tab Headers */}
@@ -39,6 +83,43 @@ export function SearchForm({ formData, isLoading, onUpdateForm, onSearch, onClea
           <Text style={{ color: '#9CA3AF', fontWeight: '500', fontSize: 14 }}>ქვითრები</Text>
         </View>
       </View>
+
+      {/* Enhanced Error/Success Display */}
+      {(errorState.hasError || (!errorState.hasError && errorState.errorMessage)) && (
+        <View style={{
+          backgroundColor: errorState.hasError ? '#FEF2F2' : '#F0FDF4',
+          borderLeftWidth: 4,
+          borderLeftColor: errorState.hasError ? '#DC2626' : '#059669',
+          borderRadius: 8,
+          padding: 12,
+          marginBottom: 16
+        }}>
+          <Text style={{
+            color: errorState.hasError ? '#DC2626' : '#059669',
+            fontWeight: '500',
+            fontSize: 14
+          }}>
+            {errorState.errorMessage}
+          </Text>
+          {errorState.hasError && errorState.canRetry && onRetry && (
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#DC2626',
+                paddingVertical: 6,
+                paddingHorizontal: 12,
+                borderRadius: 6,
+                marginTop: 8,
+                alignSelf: 'flex-start'
+              }}
+              onPress={onRetry}
+            >
+              <Text style={{ color: 'white', fontWeight: '500', fontSize: 12 }}>
+                თავიდან ცდა
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
 
       {/* Clean Search Card */}
       <View style={{ 
@@ -117,22 +198,31 @@ export function SearchForm({ formData, isLoading, onUpdateForm, onSearch, onClea
             />
           )}
 
-          {/* Clean Action Buttons */}
+          {/* Enhanced Action Buttons */}
           <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
             <TouchableOpacity 
               style={{
                 flex: 1,
-                backgroundColor: '#3B82F6',
+                backgroundColor: canSearch() ? '#3B82F6' : '#9CA3AF',
                 paddingVertical: 12,
                 borderRadius: 8,
                 alignItems: 'center',
-                opacity: isLoading ? 0.5 : 1
+                flexDirection: 'row',
+                justifyContent: 'center',
+                opacity: (isLoading || !canSearch()) ? 0.7 : 1
               }}
-              onPress={onSearch}
-              disabled={isLoading}
+              onPress={handleSearch}
+              disabled={isLoading || !canSearch()}
             >
+              {isLoading && (
+                <ActivityIndicator 
+                  size="small" 
+                  color="white" 
+                  style={{ marginRight: 8 }} 
+                />
+              )}
               <Text style={{ color: 'white', fontWeight: '500' }}>
-                {isLoading ? 'ძიება...' : 'ძიება'}
+                {isLoading ? (loadingState.loadingMessage || 'ძიება...') : 'ძიება'}
               </Text>
             </TouchableOpacity>
             
@@ -142,9 +232,14 @@ export function SearchForm({ formData, isLoading, onUpdateForm, onSearch, onClea
                 paddingVertical: 12,
                 paddingHorizontal: 24,
                 borderRadius: 8,
-                alignItems: 'center'
+                alignItems: 'center',
+                opacity: isLoading ? 0.5 : 1
               }}
-              onPress={onClear}
+              onPress={() => {
+                clearError?.();
+                onClear();
+              }}
+              disabled={isLoading}
             >
               <Text style={{ color: 'white', fontWeight: '500' }}>გასუფთავება</Text>
             </TouchableOpacity>
@@ -161,77 +256,159 @@ interface FieldsProps {
 }
 
 function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
+  const [personalIdError, setPersonalIdError] = React.useState('');
+  const [birthDateError, setBirthDateError] = React.useState('');
+  
+  const validatePersonalId = (value: string) => {
+    if (!value.trim()) {
+      setPersonalIdError('');
+      return;
+    }
+    if (!/^\d{11}$/.test(value.trim())) {
+      setPersonalIdError('პირადი ნომერი უნდა შეიცავდეს 11 ციფრს');
+    } else {
+      setPersonalIdError('');
+    }
+  };
+  
+  const validateBirthDate = (value: string) => {
+    if (!value.trim()) {
+      setBirthDateError('');
+      return;
+    }
+    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value.trim())) {
+      setBirthDateError('ფორმატი: DD/MM/YYYY');
+    } else {
+      setBirthDateError('');
+    }
+  };
+  
   return (
     <View style={{ gap: 16 }}>
-      <TextInput
-        style={{
-          borderWidth: 1,
-          borderColor: '#D1D5DB',
-          borderRadius: 8,
-          paddingVertical: 12,
-          paddingHorizontal: 16,
-          fontSize: 16
-        }}
-        placeholder="პირადი ნომერი"
-        placeholderTextColor="#9CA3AF"
-        value={formData.receiptNumber}
-        onChangeText={(text) => onUpdateForm({ receiptNumber: text })}
-      />
+      <View>
+        <TextInput
+          style={{
+            borderWidth: 1,
+            borderColor: personalIdError ? '#DC2626' : '#D1D5DB',
+            borderRadius: 8,
+            paddingVertical: 12,
+            paddingHorizontal: 16,
+            fontSize: 16
+          }}
+          placeholder="პირადი ნომერი (11 ციფრი)"
+          placeholderTextColor="#9CA3AF"
+          value={formData.receiptNumber}
+          onChangeText={(text) => {
+            const cleanText = text.replace(/\D/g, '').substring(0, 11);
+            onUpdateForm({ receiptNumber: cleanText });
+            validatePersonalId(cleanText);
+          }}
+          keyboardType="numeric"
+          maxLength={11}
+        />
+        {personalIdError ? (
+          <Text style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>
+            {personalIdError}
+          </Text>
+        ) : null}
+      </View>
       
       <View style={{ flexDirection: 'row', gap: 12 }}>
-        <TextInput
-          style={{
-            flex: 1,
-            borderWidth: 1,
-            borderColor: '#D1D5DB',
-            borderRadius: 8,
-            paddingVertical: 12,
-            paddingHorizontal: 16,
-            fontSize: 16
-          }}
-          placeholder="გვარი"
-          placeholderTextColor="#9CA3AF"
-          value={formData.merchantName}
-          onChangeText={(text) => onUpdateForm({ merchantName: text })}
-        />
-        <TextInput
-          style={{
-            flex: 1,
-            borderWidth: 1,
-            borderColor: '#D1D5DB',
-            borderRadius: 8,
-            paddingVertical: 12,
-            paddingHorizontal: 16,
-            fontSize: 16
-          }}
-          placeholder="დდ/თთ/წწწწ"
-          placeholderTextColor="#9CA3AF"
-          value={formData.searchQuery}
-          onChangeText={(text) => onUpdateForm({ searchQuery: text })}
-        />
+        <View style={{ flex: 1 }}>
+          <TextInput
+            style={{
+              borderWidth: 1,
+              borderColor: '#D1D5DB',
+              borderRadius: 8,
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              fontSize: 16
+            }}
+            placeholder="გვარი"
+            placeholderTextColor="#9CA3AF"
+            value={formData.merchantName}
+            onChangeText={(text) => onUpdateForm({ merchantName: text })}
+            autoCapitalize="words"
+          />
+        </View>
+        
+        <View style={{ flex: 1 }}>
+          <TextInput
+            style={{
+              borderWidth: 1,
+              borderColor: birthDateError ? '#DC2626' : '#D1D5DB',
+              borderRadius: 8,
+              paddingVertical: 12,
+              paddingHorizontal: 16,
+              fontSize: 16
+            }}
+            placeholder="DD/MM/YYYY"
+            placeholderTextColor="#9CA3AF"
+            value={formData.searchQuery}
+            onChangeText={(text) => {
+              // Auto-format date input
+              let formatted = text.replace(/\D/g, '');
+              if (formatted.length >= 3) formatted = formatted.slice(0,2) + '/' + formatted.slice(2);
+              if (formatted.length >= 6) formatted = formatted.slice(0,5) + '/' + formatted.slice(5,9);
+              onUpdateForm({ searchQuery: formatted });
+              validateBirthDate(formatted);
+            }}
+            keyboardType="numeric"
+            maxLength={10}
+          />
+          {birthDateError ? (
+            <Text style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>
+              {birthDateError}
+            </Text>
+          ) : null}
+        </View>
       </View>
     </View>
   );
 }
 
 function CarSearchFields({ formData, onUpdateForm }: FieldsProps) {
+  const [carNumberError, setCarNumberError] = React.useState('');
+  
+  const validateCarNumber = (value: string) => {
+    if (!value.trim()) {
+      setCarNumberError('');
+      return;
+    }
+    if (!VALIDATION.CAR_NUMBER.test(value.trim())) {
+      setCarNumberError('არასწორი ავტო ნომრის ფორმატი');
+    } else {
+      setCarNumberError('');
+    }
+  };
+  
   return (
     <View>
       <TextInput
         style={{
           borderWidth: 1,
-          borderColor: '#D1D5DB',
+          borderColor: carNumberError ? '#DC2626' : '#D1D5DB',
           borderRadius: 8,
           paddingVertical: 12,
           paddingHorizontal: 16,
           fontSize: 16
         }}
-        placeholder="მაგ: AB123CD"
+        placeholder="მაგ: AB123CD ან 123ABC"
         placeholderTextColor="#9CA3AF"
         value={formData.receiptNumber}
-        onChangeText={(text) => onUpdateForm({ receiptNumber: text.toUpperCase() })}
+        onChangeText={(text) => {
+          const cleanText = text.toUpperCase().trim();
+          onUpdateForm({ receiptNumber: cleanText });
+          validateCarNumber(cleanText);
+        }}
         autoCapitalize="characters"
+        maxLength={8}
       />
+      {carNumberError ? (
+        <Text style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>
+          {carNumberError}
+        </Text>
+      ) : null}
     </View>
   );
 }
