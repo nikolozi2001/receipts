@@ -1,4 +1,6 @@
+import { BORDER_RADIUS, COLORS, SHADOWS, SPACING, TYPOGRAPHY } from '@/constants/design';
 import { ProtocolData, ProtocolItem } from '@/types/api';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -15,9 +17,9 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
   const renderEmptyState = () => {
     if (protocolData?.results?.length === 0) {
       return (
-        <View className="py-16 items-center">
-          <Text className="text-6xl mb-4">✅</Text>
-          <Text className="text-green-600 text-lg font-medium mb-2">ჯარიმები არ არის</Text>
+        <View style={{ paddingVertical: SPACING['6xl'], alignItems: 'center' }}>
+          <Ionicons name="checkmark-circle" size={64} color={COLORS.success[500]} style={{marginBottom: SPACING.lg}} />
+          <Text style={{ color: COLORS.success[600], fontSize: TYPOGRAPHY.fontSize.lg, fontWeight: TYPOGRAPHY.fontWeight.medium, marginBottom: SPACING.sm }}>ჯარიმები არ არის</Text>
           <Text className="text-gray-500 text-center px-8">
             {searchMode === 'car' 
               ? 'ამ ავტომობილის ნომერზე აქტიური ჯარიმები არ არის' 
@@ -33,14 +35,14 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
         <View className="py-16 items-center">
           {isLoading ? (
             <>
-              <Text className="text-6xl mb-4">⏳</Text>
-              <Text className="text-blue-600 text-lg font-medium mb-2">დატვირთვა...</Text>
+              <Ionicons name="time" size={64} color={COLORS.primary[500]} style={{marginBottom: SPACING.lg}} />
+              <Text style={{ color: COLORS.primary[600], fontSize: TYPOGRAPHY.fontSize.lg, fontWeight: TYPOGRAPHY.fontWeight.medium, marginBottom: SPACING.sm }}>დატვირთვა...</Text>
               <Text className="text-gray-500 text-center px-8">გთხოვთ მოიცადოთ</Text>
             </>
           ) : (
             <>
-              <Text className="text-6xl mb-4">🔍</Text>
-              <Text className="text-gray-600 text-lg font-medium mb-2">ძიების დასაწყებად</Text>
+              <Ionicons name="search" size={64} color={COLORS.neutral[500]} style={{marginBottom: SPACING.lg}} />
+              <Text style={{ color: COLORS.neutral[600], fontSize: TYPOGRAPHY.fontSize.lg, fontWeight: TYPOGRAPHY.fontWeight.medium, marginBottom: SPACING.sm }}>ძიების დასაწყებად</Text>
               <Text className="text-gray-500 text-center px-8">
                 შეიყვანეთ ავტომობილის ნომერი ან პირადი ნომერი
               </Text>
@@ -51,9 +53,9 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
     }
 
     return (
-      <View className="py-16 items-center">
-        <Text className="text-6xl mb-4">📄</Text>
-        <Text className="text-orange-600 text-lg font-medium mb-2">მონაცემები არ მოიძებნა</Text>
+      <View style={{ paddingVertical: SPACING['6xl'], alignItems: 'center' }}>
+        <MaterialIcons name="description" size={64} color={COLORS.warning[500]} style={{marginBottom: SPACING.lg}} />
+        <Text style={{ color: COLORS.warning[600], fontSize: TYPOGRAPHY.fontSize.lg, fontWeight: TYPOGRAPHY.fontWeight.medium, marginBottom: SPACING.sm }}>მონაცემები არ მოიძებნა</Text>
         <Text className="text-gray-500 text-center px-8">
           სცადეთ სხვა ძიების პარამეტრები
         </Text>
@@ -62,42 +64,44 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
   };
 
   return (
-    <View style={{ paddingHorizontal: 24 }}>
+    <View style={{ paddingHorizontal: SPACING['2xl'] }}>
       <View style={{
-        backgroundColor: 'white',
-        borderRadius: 12,
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.xl,
         borderWidth: 1,
-        borderColor: '#E5E7EB',
-        overflow: 'hidden'
+        borderColor: COLORS.neutral[200],
+        overflow: 'hidden',
+        ...SHADOWS.lg
       }}>
         {protocolData?.results && protocolData.results.length > 0 ? (
           <View>
             {/* Clean Table Header */}
             <View style={{
-              backgroundColor: '#F9FAFB',
-              paddingVertical: 12,
-              paddingHorizontal: 16,
+              backgroundColor: COLORS.primary[50],
+              paddingVertical: SPACING.lg,
+              paddingHorizontal: SPACING.lg,
               borderBottomWidth: 1,
-              borderBottomColor: '#E5E7EB'
+              borderBottomColor: COLORS.neutral[200]
             }}>
               <Text style={{
-                color: '#6B7280',
-                fontSize: 14,
-                fontWeight: '500',
+                color: COLORS.primary[700],
+                fontSize: TYPOGRAPHY.fontSize.sm,
+                fontWeight: TYPOGRAPHY.fontWeight.semibold,
                 textAlign: 'center'
               }}>
                 ნაპოვნია {protocolData.results.length} ჯარიმა
               </Text>
             </View>
-            
-            {/* Results List */}
-            {protocolData.results.map((protocol, index) => (
-              <ProtocolRow
-                key={protocol.protocolNo}
-                protocol={protocol}
-                isLast={index === protocolData.results.length - 1}
-              />
-            ))}
+            {/* Modern Card-based Results */}
+            <View>
+              {protocolData.results.map((protocol, index) => (
+                <ProtocolRow
+                  key={protocol.protocolNo}
+                  protocol={protocol}
+                  isLast={index === protocolData.results.length - 1}
+                />
+              ))}
+            </View>
           </View>
         ) : (
           renderEmptyState()
@@ -120,59 +124,112 @@ function ProtocolRow({ protocol, isLast }: ProtocolRowProps) {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     // Future: Navigate to protocol details or show more info
   };
+
+  const getStatusColor = () => {
+    if (isOverdue) return {
+      bg: COLORS.error[50],
+      text: COLORS.error[600],
+      border: COLORS.error[200]
+    };
+    if (isUrgent) return {
+      bg: COLORS.warning[50],
+      text: COLORS.warning[600],
+      border: COLORS.warning[200]
+    };
+    return {
+      bg: COLORS.success[50],
+      text: COLORS.success[600],
+      border: COLORS.success[200]
+    };
+  };
+
+  const statusColor = getStatusColor();
   
   return (
     <TouchableOpacity
       style={{
-        padding: 16,
-        borderBottomWidth: isLast ? 0 : 1,
-        borderBottomColor: '#F3F4F6'
+        marginHorizontal: SPACING.lg,
+        marginVertical: SPACING.sm,
+        backgroundColor: COLORS.white,
+        borderRadius: BORDER_RADIUS.lg,
+        borderWidth: 1,
+        borderColor: statusColor.border,
+        padding: SPACING.lg,
+        ...SHADOWS.md
       }}
       onPress={handlePress}
       activeOpacity={0.7}
     >
+      {/* Card Header */}
       <View style={{
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 8
+        marginBottom: SPACING.lg
       }}>
-        <Text style={{
-          color: '#2563EB',
-          fontWeight: '600'
-        }}>
-          {protocol.protocolNo}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <MaterialIcons name="description" size={20} color={COLORS.primary[500]} style={{ marginRight: SPACING.sm }} />
+          <Text style={{
+            color: COLORS.primary[600],
+            fontSize: TYPOGRAPHY.fontSize.base,
+            fontWeight: TYPOGRAPHY.fontWeight.semibold
+          }}>
+            {protocol.protocolNo}
+          </Text>
+        </View>
         <View style={{
-          paddingHorizontal: 8,
-          paddingVertical: 4,
-          borderRadius: 9999,
-          backgroundColor: isOverdue ? '#FEE2E2' : isUrgent ? '#FEF3C7' : '#D1FAE5'
+          paddingHorizontal: SPACING.lg,
+          paddingVertical: SPACING.xs,
+          borderRadius: BORDER_RADIUS.full,
+          backgroundColor: statusColor.bg,
+          borderWidth: 1,
+          borderColor: statusColor.border
         }}>
           <Text style={{
-            fontSize: 12,
-            fontWeight: '500',
-            color: isOverdue ? '#DC2626' : isUrgent ? '#D97706' : '#059669'
+            color: statusColor.text,
+            fontSize: TYPOGRAPHY.fontSize.xs,
+            fontWeight: TYPOGRAPHY.fontWeight.medium
           }}>
-            {protocol.remainingDays}დღე
+            {isOverdue ? 'გადაცილებული' : isUrgent ? 'ტერმინი ამოიწურება' : `${protocol.remainingDays} დღე`}
           </Text>
         </View>
       </View>
-      
-      <Text style={{
-        color: '#6B7280',
-        fontSize: 14,
-        marginBottom: 4
-      }}>
-        {protocol.violationDate} • {protocol.protocolPlace}
-      </Text>
-      
-      <Text style={{
-        color: '#111827',
-        fontWeight: '500'
-      }}>
-        {protocol.protocolAmount}₾
-      </Text>
+
+      {/* Card Content */}
+      <View style={{ gap: SPACING.sm }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Ionicons name="calendar" size={16} color={COLORS.neutral[500]} style={{ marginRight: SPACING.sm, width: 20 }} />
+          <Text style={{ color: COLORS.neutral[600], fontSize: TYPOGRAPHY.fontSize.sm }}>
+            {protocol.violationDate}
+          </Text>
+        </View>
+        
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Ionicons name="location" size={16} color={COLORS.neutral[500]} style={{ marginRight: SPACING.sm, width: 20 }} />
+          <Text style={{ 
+            color: COLORS.neutral[600], 
+            fontSize: TYPOGRAPHY.fontSize.sm,
+            flex: 1
+          }}>
+            {protocol.protocolPlace}
+          </Text>
+        </View>
+        
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: SPACING.sm }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Ionicons name="cash" size={16} color={COLORS.neutral[500]} style={{ marginRight: SPACING.sm, width: 20 }} />
+            <Text style={{ 
+              color: COLORS.neutral[800], 
+              fontSize: TYPOGRAPHY.fontSize.base,
+              fontWeight: TYPOGRAPHY.fontWeight.semibold
+            }}>
+              {protocol.protocolAmount}₾
+            </Text>
+          </View>
+          
+          <Ionicons name="chevron-forward" size={16} color={COLORS.neutral[400]} />
+        </View>
+      </View>
     </TouchableOpacity>
   );
 }

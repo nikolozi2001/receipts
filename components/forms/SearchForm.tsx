@@ -1,4 +1,6 @@
+import { BORDER_RADIUS, COLORS, SHADOWS, SPACING, TYPOGRAPHY } from '@/constants/design';
 import { ErrorState, LoadingState, SearchFormData } from '@/types/api';
+import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -49,67 +51,72 @@ export function SearchForm({
     onSearch();
   };
   return (
-    <View style={{ paddingHorizontal: 24, paddingBottom: 24 }}>
-      {/* Clean Tab Headers */}
+    <View style={{ paddingHorizontal: SPACING['2xl'], paddingBottom: SPACING['2xl'] }}>
+      {/* Modern Tab Headers with Glassmorphism */}
       <View style={{ 
         flexDirection: 'row', 
-        backgroundColor: '#F9FAFB', 
-        borderRadius: 12, 
+        backgroundColor: COLORS.neutral[50], 
+        borderRadius: BORDER_RADIUS.lg, 
         overflow: 'hidden', 
-        marginBottom: 24 
+        marginBottom: SPACING['2xl'],
+        ...SHADOWS.sm
       }}>
         <View style={{ 
           flex: 1, 
-          backgroundColor: '#3B82F6', 
-          paddingVertical: 16, 
-          paddingHorizontal: 16, 
-          alignItems: 'center' 
+          backgroundColor: COLORS.primary[500], 
+          paddingVertical: SPACING.lg, 
+          paddingHorizontal: SPACING.lg, 
+          alignItems: 'center',
+          ...SHADOWS.md
         }}>
-          <Text style={{ color: 'white', fontWeight: '500', fontSize: 14 }}>ჯარიმების ძიება</Text>
+          <Text style={{ color: COLORS.white, fontWeight: TYPOGRAPHY.fontWeight.medium, fontSize: TYPOGRAPHY.fontSize.sm }}>ჯარიმების ძიება</Text>
         </View>
         <View style={{ 
           flex: 1, 
-          paddingVertical: 16, 
-          paddingHorizontal: 16, 
+          paddingVertical: SPACING.lg, 
+          paddingHorizontal: SPACING.lg, 
           alignItems: 'center' 
         }}>
-          <Text style={{ color: '#9CA3AF', fontWeight: '500', fontSize: 14 }}>ქვითრები</Text>
+          <Text style={{ color: COLORS.neutral[400], fontWeight: TYPOGRAPHY.fontWeight.medium, fontSize: TYPOGRAPHY.fontSize.sm }}>ქვითრები</Text>
         </View>
       </View>
 
       {/* Enhanced Error/Success Display */}
       {(errorState.hasError || (!errorState.hasError && errorState.errorMessage)) && (
         <View style={{
-          backgroundColor: errorState.hasError ? '#FEF2F2' : '#F0FDF4',
+          backgroundColor: errorState.hasError ? COLORS.error[50] : COLORS.success[50],
           borderLeftWidth: 4,
-          borderLeftColor: errorState.hasError ? '#DC2626' : '#059669',
-          borderRadius: 8,
-          padding: 12,
-          marginBottom: 16
+          borderLeftColor: errorState.hasError ? COLORS.error[500] : COLORS.success[500],
+          borderRadius: BORDER_RADIUS.md,
+          padding: SPACING.lg,
+          marginBottom: SPACING.lg,
+          ...SHADOWS.sm
         }}>
           <Text style={{
-            color: errorState.hasError ? '#DC2626' : '#059669',
-            fontWeight: '500',
-            fontSize: 14
+            color: errorState.hasError ? COLORS.error[600] : COLORS.success[600],
+            fontWeight: TYPOGRAPHY.fontWeight.medium,
+            fontSize: TYPOGRAPHY.fontSize.sm,
+            lineHeight: TYPOGRAPHY.lineHeight.relaxed * TYPOGRAPHY.fontSize.sm
           }}>
             {errorState.errorMessage}
           </Text>
           {errorState.hasError && errorState.canRetry && onRetry && (
             <TouchableOpacity
               style={{
-                backgroundColor: '#DC2626',
-                paddingVertical: 6,
-                paddingHorizontal: 12,
-                borderRadius: 6,
-                marginTop: 8,
-                alignSelf: 'flex-start'
+                backgroundColor: COLORS.error[500],
+                paddingVertical: SPACING.xs + 2,
+                paddingHorizontal: SPACING.lg,
+                borderRadius: BORDER_RADIUS.sm,
+                marginTop: SPACING.sm,
+                alignSelf: 'flex-start',
+                ...SHADOWS.sm
               }}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                 onRetry?.();
               }}
             >
-              <Text style={{ color: 'white', fontWeight: '500', fontSize: 12 }}>
+              <Text style={{ color: COLORS.white, fontWeight: TYPOGRAPHY.fontWeight.medium, fontSize: TYPOGRAPHY.fontSize.xs }}>
                 თავიდან ცდა
               </Text>
             </TouchableOpacity>
@@ -117,20 +124,22 @@ export function SearchForm({
         </View>
       )}
 
-      {/* Clean Search Card */}
+      {/* Modern Search Card with Glassmorphism */}
       <View style={{ 
-        backgroundColor: 'white', 
-        borderRadius: 12, 
+        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+        borderRadius: BORDER_RADIUS.xl, 
         borderWidth: 1, 
-        borderColor: '#E5E7EB' 
+        borderColor: 'rgba(255, 255, 255, 0.2)',
+        ...SHADOWS.lg
       }}>
-        <View style={{ padding: 24 }}>
+        <View style={{ padding: SPACING['2xl'] }}>
           {/* Simple Mode Selection */}
           <View style={{ 
             flexDirection: 'row', 
-            backgroundColor: '#F3F4F6', 
-            borderRadius: 8, 
-            marginBottom: 24 
+            backgroundColor: COLORS.neutral[100], 
+            borderRadius: BORDER_RADIUS.md, 
+            marginBottom: SPACING['2xl'],
+            padding: SPACING.xs
           }}>
             <TouchableOpacity 
               style={{
@@ -201,27 +210,30 @@ export function SearchForm({
           )}
 
           {/* Enhanced Action Buttons */}
-          <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
+          <View style={{ flexDirection: 'row', gap: SPACING.lg, marginTop: SPACING['2xl'] }}>
             <TouchableOpacity 
               style={{
                 flex: 1,
-                backgroundColor: canSearch() ? '#3B82F6' : '#9CA3AF',
-                paddingVertical: 12,
-                borderRadius: 8,
+                backgroundColor: canSearch() ? COLORS.primary[500] : COLORS.neutral[400],
+                paddingVertical: SPACING.lg,
+                borderRadius: BORDER_RADIUS.md,
                 alignItems: 'center',
                 flexDirection: 'row',
                 justifyContent: 'center',
-                opacity: (isLoading || !canSearch()) ? 0.7 : 1
+                opacity: (isLoading || !canSearch()) ? 0.7 : 1,
+                ...SHADOWS.md
               }}
               onPress={handleSearch}
               disabled={isLoading || !canSearch()}
             >
-              {isLoading && (
+              {isLoading ? (
                 <ActivityIndicator 
                   size="small" 
                   color="white" 
                   style={{ marginRight: 8 }} 
                 />
+              ) : (
+                <Ionicons name="search" size={16} color="white" style={{ marginRight: 8 }} />
               )}
               <Text style={{ color: 'white', fontWeight: '500' }}>
                 {isLoading ? (loadingState.loadingMessage || 'ძიება...') : 'ძიება'}
@@ -230,12 +242,15 @@ export function SearchForm({
             
             <TouchableOpacity 
               style={{
-                backgroundColor: '#9CA3AF',
-                paddingVertical: 12,
-                paddingHorizontal: 24,
-                borderRadius: 8,
+                backgroundColor: COLORS.neutral[400],
+                paddingVertical: SPACING.lg,
+                paddingHorizontal: SPACING['2xl'],
+                borderRadius: BORDER_RADIUS.md,
                 alignItems: 'center',
-                opacity: isLoading ? 0.5 : 1
+                flexDirection: 'row',
+                justifyContent: 'center',
+                opacity: isLoading ? 0.5 : 1,
+                ...SHADOWS.sm
               }}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -244,7 +259,8 @@ export function SearchForm({
               }}
               disabled={isLoading}
             >
-              <Text style={{ color: 'white', fontWeight: '500' }}>გასუფთავება</Text>
+              <Ionicons name="refresh" size={16} color="white" style={{ marginRight: 6 }} />
+              <Text style={{ color: COLORS.white, fontWeight: TYPOGRAPHY.fontWeight.semibold, fontSize: TYPOGRAPHY.fontSize.base }}>გასუფთავება</Text>
             </TouchableOpacity>
           </View>
         </View>

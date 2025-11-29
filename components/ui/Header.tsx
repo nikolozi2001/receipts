@@ -1,3 +1,5 @@
+import { BORDER_RADIUS, COLORS, SHADOWS, SPACING, TYPOGRAPHY } from '@/constants/design';
+import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, View } from 'react-native';
 
@@ -10,38 +12,40 @@ interface HeaderProps {
 export function Header({ title, subtitle, lastUpdated }: HeaderProps) {
   return (
     <View style={{
-      backgroundColor: 'white',
-      paddingTop: 64,
-      paddingBottom: 24,
-      paddingHorizontal: 24,
+      backgroundColor: COLORS.white,
+      paddingTop: SPACING['6xl'],
+      paddingBottom: SPACING['2xl'],
+      paddingHorizontal: SPACING['2xl'],
       borderBottomWidth: 1,
-      borderBottomColor: '#F3F4F6'
+      borderBottomColor: COLORS.neutral[100],
+      ...SHADOWS.sm
     }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
         <View style={{
-          width: 32,
-          height: 32,
-          backgroundColor: '#3B82F6',
-          borderRadius: 8,
-          marginRight: 12,
+          width: 40,
+          height: 40,
+          backgroundColor: COLORS.primary[500],
+          borderRadius: BORDER_RADIUS.md,
+          marginRight: SPACING.lg,
           justifyContent: 'center',
-          alignItems: 'center'
+          alignItems: 'center',
+          ...SHADOWS.md
         }}>
-          <Text style={{ color: 'white', fontSize: 14, fontWeight: 'bold' }}>🏛</Text>
+          <MaterialIcons name="account-balance" size={20} color={COLORS.white} />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{
-            color: '#111827',
-            fontSize: 18,
-            fontWeight: '600'
+            color: COLORS.neutral[900],
+            fontSize: TYPOGRAPHY.fontSize.xl,
+            fontWeight: TYPOGRAPHY.fontWeight.semibold
           }}>
             {title}
           </Text>
           {subtitle && (
             <Text style={{
-              color: '#6B7280',
-              fontSize: 14,
-              marginTop: 2
+              color: COLORS.neutral[500],
+              fontSize: TYPOGRAPHY.fontSize.sm,
+              marginTop: SPACING.xs
             }}>
               {subtitle}
             </Text>
@@ -51,8 +55,8 @@ export function Header({ title, subtitle, lastUpdated }: HeaderProps) {
       
       {lastUpdated && (
         <Text style={{
-          color: '#9CA3AF',
-          fontSize: 12,
+          color: COLORS.neutral[400],
+          fontSize: TYPOGRAPHY.fontSize.xs,
           textAlign: 'center'
         }}>
           ბოლო განახლება: {lastUpdated}
@@ -69,22 +73,22 @@ interface TitleSectionProps {
 
 export function TitleSection({ title, description }: TitleSectionProps) {
   return (
-    <View style={{ paddingHorizontal: 24, paddingVertical: 24, backgroundColor: 'white' }}>
+    <View style={{ paddingHorizontal: SPACING['2xl'], paddingVertical: SPACING['2xl'], backgroundColor: COLORS.white }}>
       <Text style={{
-        fontSize: 20,
-        fontWeight: '500',
-        color: '#111827',
+        fontSize: TYPOGRAPHY.fontSize['2xl'],
+        fontWeight: TYPOGRAPHY.fontWeight.semibold,
+        color: COLORS.neutral[900],
         textAlign: 'center',
-        marginBottom: 12
+        marginBottom: SPACING.lg
       }}>
         {title}
       </Text>
       <Text style={{
-        fontSize: 14,
-        color: '#6B7280',
+        fontSize: TYPOGRAPHY.fontSize.sm,
+        color: COLORS.neutral[500],
         textAlign: 'center',
-        lineHeight: 20,
-        paddingHorizontal: 16
+        lineHeight: TYPOGRAPHY.lineHeight.relaxed * TYPOGRAPHY.fontSize.sm,
+        paddingHorizontal: SPACING.lg
       }}>
         {description}
       </Text>
