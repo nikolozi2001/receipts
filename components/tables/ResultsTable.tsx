@@ -1,6 +1,7 @@
 import { ProtocolData, ProtocolItem } from '@/types/api';
+import * as Haptics from 'expo-haptics';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface ResultsTableProps {
   protocolData: ProtocolData | null;
@@ -10,28 +11,6 @@ interface ResultsTableProps {
 }
 
 export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQuery }: ResultsTableProps) {
-  const renderTableHeader = () => {
-    if (protocolData?.results && protocolData.results.length > 0) {
-      return (
-        <View className="flex-row bg-gradient-to-r from-gray-50 to-blue-50 py-4 px-4 border-b border-gray-200">
-          <Text className="flex-2 font-bold text-gray-800 text-sm">📋 პროტოკოლის №</Text>
-          <Text className="flex-2 font-bold text-gray-800 text-sm">📅 თარიღი</Text>
-          <Text className="flex-2 font-bold text-gray-800 text-sm">📍 ადგილი</Text>
-          <Text className="flex-1 font-bold text-gray-800 text-sm">💰 თანხა</Text>
-          <Text className="flex-1 font-bold text-gray-800 text-sm">⏰ დღე</Text>
-        </View>
-      );
-    }
-    return (
-      <View className="flex-row bg-gradient-to-r from-gray-50 to-blue-50 py-4 px-4 border-b border-gray-200">
-        <Text className="flex-2 font-bold text-gray-800 text-sm">📋 ქვითრის №</Text>
-        <Text className="flex-2 font-bold text-gray-800 text-sm">📅 გამოცემის თარიღი</Text>
-        <Text className="flex-2 font-bold text-gray-800 text-sm">🏪 მაღაზია</Text>
-        <Text className="flex-2 font-bold text-gray-800 text-sm">💰 თანხა</Text>
-        <Text className="flex-1 font-bold text-gray-800 text-sm">👁️ ნახვა</Text>
-      </View>
-    );
-  };
 
   const renderEmptyState = () => {
     if (protocolData?.results?.length === 0) {
@@ -137,12 +116,21 @@ function ProtocolRow({ protocol, isLast }: ProtocolRowProps) {
   const isOverdue = protocol.remainingDays <= 0;
   const isUrgent = protocol.remainingDays <= 5 && protocol.remainingDays > 0;
   
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Future: Navigate to protocol details or show more info
+  };
+  
   return (
-    <View style={{
-      padding: 16,
-      borderBottomWidth: isLast ? 0 : 1,
-      borderBottomColor: '#F3F4F6'
-    }}>
+    <TouchableOpacity
+      style={{
+        padding: 16,
+        borderBottomWidth: isLast ? 0 : 1,
+        borderBottomColor: '#F3F4F6'
+      }}
+      onPress={handlePress}
+      activeOpacity={0.7}
+    >
       <View style={{
         flexDirection: 'row',
         alignItems: 'center',
@@ -185,6 +173,6 @@ function ProtocolRow({ protocol, isLast }: ProtocolRowProps) {
       }}>
         {protocol.protocolAmount}₾
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 }

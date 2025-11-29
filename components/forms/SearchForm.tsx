@@ -1,4 +1,5 @@
 import { ErrorState, LoadingState, SearchFormData } from '@/types/api';
+import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -32,15 +33,6 @@ export function SearchForm({
   clearError 
 }: SearchFormProps) {
   
-  // Validation helpers
-  const validateCarNumber = (value: string): boolean => {
-    return VALIDATION.CAR_NUMBER.test(value.trim());
-  };
-  
-  const validatePersonalId = (value: string): boolean => {
-    return VALIDATION.PERSONAL_ID.test(value.trim());
-  };
-  
   const canSearch = () => {
     if (formData.searchMode === 'car') {
       return formData.receiptNumber.trim().length > 0;
@@ -52,6 +44,7 @@ export function SearchForm({
   };
   
   const handleSearch = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     clearError?.();
     onSearch();
   };
@@ -111,7 +104,10 @@ export function SearchForm({
                 marginTop: 8,
                 alignSelf: 'flex-start'
               }}
-              onPress={onRetry}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                onRetry?.();
+              }}
             >
               <Text style={{ color: 'white', fontWeight: '500', fontSize: 12 }}>
                 თავიდან ცდა
@@ -149,7 +145,10 @@ export function SearchForm({
                 shadowRadius: 2,
                 elevation: formData.searchMode === 'personal' ? 1 : 0
               }}
-              onPress={() => onUpdateForm({ searchMode: 'personal' })}
+              onPress={() => {
+                Haptics.selectionAsync();
+                onUpdateForm({ searchMode: 'personal' });
+              }}
             >
               <Text style={{
                 textAlign: 'center',
@@ -173,7 +172,10 @@ export function SearchForm({
                 shadowRadius: 2,
                 elevation: formData.searchMode === 'car' ? 1 : 0
               }}
-              onPress={() => onUpdateForm({ searchMode: 'car' })}
+              onPress={() => {
+                Haptics.selectionAsync();
+                onUpdateForm({ searchMode: 'car' });
+              }}
             >
               <Text style={{
                 textAlign: 'center',
@@ -236,6 +238,7 @@ export function SearchForm({
                 opacity: isLoading ? 0.5 : 1
               }}
               onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 clearError?.();
                 onClear();
               }}

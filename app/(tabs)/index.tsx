@@ -10,7 +10,6 @@ export default function Index() {
   const {
     protocolData,
     isLoading,
-    error,
     loadingState,
     errorState,
     searchForm,

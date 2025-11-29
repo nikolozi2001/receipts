@@ -1,5 +1,6 @@
 import { apiService } from '@/services/api';
 import { ErrorState, LoadingState, ProtocolData, SearchFormData } from '@/types/api';
+import * as Haptics from 'expo-haptics';
 import { create } from 'zustand';
 
 // Loading and error messages inline to avoid import issues
@@ -98,7 +99,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     errorState: { ...prev.errorState, ...state }
   })),
   
-  clearError: () => set((prev) => ({
+  clearError: () => set(() => ({
     errorState: {
       hasError: false,
       errorMessage: '',
@@ -137,7 +138,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
           });
         }
       }
-    } catch (err) {
+    } catch (error) {
+      console.error('Failed to fetch protocols:', error);
       set({ protocolData: { count: 0, results: [] } });
       setErrorState({
         hasError: true,
@@ -169,6 +171,13 @@ export const useAppStore = create<AppState>()((set, get) => ({
       if (response.success) {
         set({ protocolData: response.data });
         
+        // Add success haptic feedback
+        if (response.data && response.data.results && response.data.results.length > 0) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        } else {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+        
         // Show success message briefly
         if (response.message) {
           setErrorState({
@@ -183,6 +192,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
           }, 3000);
         }
       } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         set({ protocolData: { count: 0, results: [] } });
         setErrorState({
           hasError: true,
@@ -191,7 +201,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
           retryCount: 0
         });
       }
-    } catch (err) {
+    } catch (error) {
+      console.error('Car search failed:', error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       set({ protocolData: { count: 0, results: [] } });
       setErrorState({
         hasError: true,
@@ -218,6 +230,13 @@ export const useAppStore = create<AppState>()((set, get) => ({
       if (response.success) {
         set({ protocolData: response.data });
         
+        // Add success haptic feedback
+        if (response.data && response.data.results && response.data.results.length > 0) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        } else {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+        
         // Show success message briefly
         if (response.message) {
           setErrorState({
@@ -232,6 +251,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
           }, 3000);
         }
       } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         set({ protocolData: { count: 0, results: [] } });
         setErrorState({
           hasError: true,
@@ -240,7 +260,9 @@ export const useAppStore = create<AppState>()((set, get) => ({
           retryCount: 0
         });
       }
-    } catch (err) {
+    } catch (error) {
+      console.error('Personal data search failed:', error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       set({ protocolData: { count: 0, results: [] } });
       setErrorState({
         hasError: true,
