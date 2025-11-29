@@ -1,7 +1,6 @@
-import { BORDER_RADIUS, COLORS, SHADOWS, SPACING, TYPOGRAPHY } from '@/constants/design';
-import { MaterialIcons } from '@expo/vector-icons';
+import { COLORS, SHADOWS, SPACING, TYPOGRAPHY } from '@/constants/design';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Image, ImageBackground, Text, View } from 'react-native';
 
 interface HeaderProps {
   title: string;
@@ -11,58 +10,67 @@ interface HeaderProps {
 
 export function Header({ title, subtitle, lastUpdated }: HeaderProps) {
   return (
-    <View style={{
-      backgroundColor: COLORS.white,
-      paddingTop: SPACING['6xl'],
-      paddingBottom: SPACING['2xl'],
-      paddingHorizontal: SPACING['2xl'],
-      borderBottomWidth: 1,
-      borderBottomColor: COLORS.neutral[100],
-      ...SHADOWS.sm
-    }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-        <View style={{
-          width: 40,
-          height: 40,
-          backgroundColor: COLORS.primary[500],
-          borderRadius: BORDER_RADIUS.md,
-          marginRight: SPACING.lg,
-          justifyContent: 'center',
-          alignItems: 'center',
-          ...SHADOWS.md
-        }}>
-          <MaterialIcons name="account-balance" size={20} color={COLORS.white} />
+    <ImageBackground
+      source={require('../../assets/images/services_bg_1440.png')}
+      style={{
+        paddingTop: SPACING['6xl'],
+        paddingBottom: SPACING['2xl'],
+        paddingHorizontal: SPACING['2xl'],
+        borderBottomWidth: 3,
+        borderBottomColor: '#ffd700',
+        ...SHADOWS.lg
+      }}
+      resizeMode="cover"
+    >
+      <View style={{ 
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'flex-start',
+        marginBottom: 16 
+      }}>
+        {/* Left SHSS Logo */}
+        <View style={{ alignItems: 'flex-start', marginRight: SPACING.lg }}>
+          <Image
+            source={require('../../assets/images/shss.webp')}
+            style={{
+              width: 60,
+              height: 60,
+              resizeMode: 'contain'
+            }}
+          />
         </View>
-        <View style={{ flex: 1 }}>
+
+        {/* Center Title */}
+        <View style={{ flex: 1, alignItems: 'center', paddingHorizontal: SPACING.md }}>
           <Text style={{
-            color: COLORS.neutral[900],
-            fontSize: TYPOGRAPHY.fontSize.xl,
-            fontWeight: TYPOGRAPHY.fontWeight.semibold
+            color: COLORS.white,
+            fontSize: TYPOGRAPHY.fontSize.lg,
+            fontWeight: TYPOGRAPHY.fontWeight.bold,
+            textAlign: 'center',
+            textShadowColor: 'rgba(0, 0, 0, 0.5)',
+            textShadowOffset: { width: 1, height: 1 },
+            textShadowRadius: 2,
+            letterSpacing: 0.5
           }}>
-            {title}
+            შინაგან საქმეთა სამინისტრო
           </Text>
           {subtitle && (
             <Text style={{
-              color: COLORS.neutral[500],
+              color: '#ffd700',
               fontSize: TYPOGRAPHY.fontSize.sm,
-              marginTop: SPACING.xs
+              marginTop: SPACING.xs,
+              textAlign: 'center',
+              textShadowColor: 'rgba(0, 0, 0, 0.5)',
+              textShadowOffset: { width: 1, height: 1 },
+              textShadowRadius: 2,
+              fontWeight: TYPOGRAPHY.fontWeight.semibold
             }}>
               {subtitle}
             </Text>
           )}
         </View>
       </View>
-      
-      {lastUpdated && (
-        <Text style={{
-          color: COLORS.neutral[400],
-          fontSize: TYPOGRAPHY.fontSize.xs,
-          textAlign: 'center'
-        }}>
-          ბოლო განახლება: {lastUpdated}
-        </Text>
-      )}
-    </View>
+    </ImageBackground>
   );
 }
 
