@@ -1,7 +1,7 @@
 import { ApiResponse } from '@/types/api';
 
 // API configuration - inline to avoid import issues
-const API_BASE_URL = __DEV__ ? 'http://192.168.3.3:3001' : 'https://api.police.ge';
+const API_BASE_URL = __DEV__ ? 'https://7a6af19108ca.ngrok-free.app' : 'https://api.police.ge';
 const API_TIMEOUT = 10000;
 const RETRY_ATTEMPTS = 3;
 const ENDPOINTS = {
@@ -49,7 +49,21 @@ class ApiService {
           await this.delay(1000 * (retryCount + 1)); // Exponential backoff
           return this.makeRequestWithRetry(url, options, retryCount + 1);
         }
-        throw new Error(this.getErrorMessage(response.status));
+        
+        // Handle 404 as "no data found" rather than an error
+        if (response.status === 404) {
+          return {
+            success: true,
+            message: 'მონაცემები არ მოიძებნა',
+            data: { count: 0, results: [] }
+          };
+        }
+        
+        return {
+          success: false,
+          message: this.getErrorMessage(response.status),
+          data: { count: 0, results: [] }
+        };
       }
 
       const contentType = response.headers.get('content-type');
@@ -148,19 +162,16 @@ class ApiService {
     const cleanCarNumber = carNumber.trim().toUpperCase();
     console.log('Searching by car number:', cleanCarNumber);
     
-    const url = `${API_BASE_URL}${ENDPOINTS.CAR_SEARCH}`;
+    const url = `${API_BASE_URL}${ENDPOINTS.CAR_SEARCH}?plate=${encodeURIComponent(cleanCarNumber)}`;
     console.log('Using API URL:', url);
     
     const response = await this.makeRequest(url, {
-      method: 'POST',
-      body: JSON.stringify({ 
-        carNumber: cleanCarNumber
-      })
+      method: 'GET'
     });
     
-    // Process successful response
-    if (response.success && response.data && response.data.results) {
-      if (response.data.results.length > 0) {
+    // Check if this is a "no data found" response (success with no results)
+    if (response.success && response.data) {
+      if (response.data.results && response.data.results.length > 0) {
         console.log('✅ Found', response.data.results.length, 'violations');
         return {
           success: true,
@@ -168,6 +179,7 @@ class ApiService {
           data: response.data
         };
       } else {
+        console.log('✅ No violations found for car:', cleanCarNumber);
         return {
           success: true,
           message: '✅ ამ ავტომობილზე აქტიური ჯარიმები არ არის',
@@ -176,6 +188,8 @@ class ApiService {
       }
     }
     
+    // If not successful, return the error response
+    console.log('❌ Search failed:', response.message);
     return response;
   }
 
@@ -239,9 +253,9 @@ class ApiService {
       })
     });
     
-    // Process successful response
-    if (response.success && response.data && response.data.results) {
-      if (response.data.results.length > 0) {
+    // Check if this is a "no data found" response (success with no results)
+    if (response.success && response.data) {
+      if (response.data.results && response.data.results.length > 0) {
         console.log('✅ Found', response.data.results.length, 'violations for personal data');
         return {
           success: true,
@@ -249,6 +263,7 @@ class ApiService {
           data: response.data
         };
       } else {
+        console.log('✅ No violations found for personal data');
         return {
           success: true,
           message: '✅ მოცემულ მონაცემებზე აქტიური ჯარიმები არ არის',
@@ -257,6 +272,8 @@ class ApiService {
       }
     }
     
+    // If not successful, return the error response
+    console.log('❌ Personal search failed:', response.message);
     return response;
   }
 }
