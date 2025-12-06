@@ -6,7 +6,7 @@ const API_TIMEOUT = 10000;
 const RETRY_ATTEMPTS = 3;
 const ENDPOINTS = {
   CAR_SEARCH: '/api/receipt-by-car',
-  PERSONAL_SEARCH: '/api/receipt-by-personal',
+  PERSONAL_SEARCH: '/api/receipt-by-person',
   ALL_PROTOCOLS: '/api/protocols'
 };
 
@@ -229,29 +229,39 @@ class ApiService {
       };
     }
     
-    // Validate birth date format (DD/MM/YYYY)
+    // Validate birth date format (DD.MM.YYYY)
     const cleanBirthDate = birthDate.trim();
-    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(cleanBirthDate)) {
+    if (!/^\d{2}\.\d{2}\.\d{4}$/.test(cleanBirthDate)) {
       return {
         success: false,
-        message: 'დაბადების თარიღი უნდა იყოს ფორმატში: DD/MM/YYYY',
+        message: 'დაბადების თარიღი უნდა იყოს ფორმატში: DD.MM.YYYY',
         data: { count: 0, results: [] }
       };
     }
     
-    console.log('Searching by personal data:', { personalId: cleanPersonalId, surname: surname.trim(), birthDate: cleanBirthDate });
+    console.log('Searching by personal data:', { personalNo: cleanPersonalId, lastName: surname.trim(), birthDate: cleanBirthDate });
     
     const url = `${API_BASE_URL}${ENDPOINTS.PERSONAL_SEARCH}`;
     console.log('Using API URL:', url);
     
-    const response = await this.makeRequest(url, {
+    // Try POST method first (as specified in the API)
+    let response = await this.makeRequest(url, {
       method: 'POST',
       body: JSON.stringify({ 
-        personalId: cleanPersonalId,
-        surname: surname.trim(),
+        personalNo: cleanPersonalId,
+        lastName: surname.trim(),
         birthDate: cleanBirthDate
       })
     });
+    
+    // If POST fails, try GET method as fallback
+    if (!response.success) {
+      console.log('POST failed, trying GET method...');
+      const getUrl = `${url}?personalNo=${encodeURIComponent(cleanPersonalId)}&lastName=${encodeURIComponent(surname.trim())}&birthDate=${encodeURIComponent(cleanBirthDate)}`;
+      response = await this.makeRequest(getUrl, {
+        method: 'GET'
+      });
+    }
     
     // Check if this is a "no data found" response (success with no results)
     if (response.success && response.data) {
