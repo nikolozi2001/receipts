@@ -1,12 +1,12 @@
 import { Tabs } from "expo-router";
-import { Text } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#3B82F6",
+        tabBarActiveTintColor: "#1a237e",
         tabBarInactiveTintColor: "#9CA3AF",
         tabBarStyle: {
           backgroundColor: "#fff",
@@ -16,13 +16,13 @@ export default function TabsLayout() {
           paddingTop: 8,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -1 },
-          shadowOpacity: 0.05,
+          shadowOpacity: 0.1,
           shadowRadius: 4,
           elevation: 8,
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          fontWeight: "500",
+          fontWeight: "600",
         },
       }}
     >
@@ -31,7 +31,7 @@ export default function TabsLayout() {
         options={{
           title: "მთავარი",
           tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size + 2, color }}>🏠</Text>
+            <Ionicons name="home" size={size} color={color} />
           ),
         }}
       />
@@ -40,7 +40,7 @@ export default function TabsLayout() {
         options={{
           title: "ძიება",
           tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size + 2, color }}>🔍</Text>
+            <Ionicons name="search" size={size} color={color} />
           ),
         }}
       />
@@ -49,7 +49,7 @@ export default function TabsLayout() {
         options={{
           title: "პროფილი",
           tabBarIcon: ({ color, size }) => (
-            <Text style={{ fontSize: size + 2, color }}>👤</Text>
+            <Ionicons name="person" size={size} color={color} />
           ),
         }}
       />

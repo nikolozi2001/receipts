@@ -410,18 +410,23 @@ export function SearchForm({
           )}
 
           {/* Action Buttons */}
-          <View style={{ flexDirection: 'row', gap: 12, marginTop: 20 }}>
+          <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
             <TouchableOpacity
               style={{
-                flex: 1,
+                flex: 2,
                 backgroundColor: isLoading ? '#4f46e5' : (canSearch() ? '#1a237e' : '#9e9e9e'),
-                paddingVertical: 12,
-                borderRadius: 6,
+                paddingVertical: 14,
+                borderRadius: 8,
                 alignItems: 'center',
                 flexDirection: 'row',
                 justifyContent: 'center',
                 opacity: (isLoading || !canSearch()) ? 0.8 : 1,
-                transform: isLoading ? [{ scale: 0.98 }] : [{ scale: 1 }]
+                transform: isLoading ? [{ scale: 0.98 }] : [{ scale: 1 }],
+                shadowColor: canSearch() ? '#1a237e' : '#9e9e9e',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
+                elevation: 4
               }}
               onPress={handleSearch}
               disabled={isLoading || !canSearch()}
@@ -433,13 +438,14 @@ export function SearchForm({
                   style={{ marginRight: 8 }}
                 />
               ) : (
-                <Ionicons name="search" size={16} color="white" style={{ marginRight: 8 }} />
+                <Ionicons name="search" size={18} color="white" style={{ marginRight: 8 }} />
               )}
               <Text style={{ 
                 color: 'white', 
-                fontWeight: '500', 
+                fontWeight: '600', 
                 fontSize: 16,
-                opacity: isLoading ? 0.9 : 1
+                opacity: isLoading ? 0.9 : 1,
+                letterSpacing: 0.3
               }}>
                 {isLoading ? (loadingState.loadingMessage || 'ძიება...') : 'ძიება'}
               </Text>
@@ -447,10 +453,10 @@ export function SearchForm({
 
             <TouchableOpacity
               style={{
-                backgroundColor: '#757575',
-                paddingVertical: 12,
-                paddingHorizontal: 16,
-                borderRadius: 6,
+                flex: 1,
+                backgroundColor: '#6b7280',
+                paddingVertical: 14,
+                borderRadius: 8,
                 alignItems: 'center',
                 flexDirection: 'row',
                 justifyContent: 'center',
@@ -463,8 +469,13 @@ export function SearchForm({
               }}
               disabled={isLoading}
             >
-              <Ionicons name="refresh" size={16} color="white" style={{ marginRight: 6 }} />
-              <Text style={{ color: 'white', fontWeight: '500', fontSize: 16 }}>გაწმენდა</Text>
+              <Ionicons name="close-circle" size={16} color="white" style={{ marginRight: 6 }} />
+              <Text style={{ 
+                color: 'white', 
+                fontWeight: '500', 
+                fontSize: 14,
+                letterSpacing: 0.2
+              }}>გაწმენდა</Text>
             </TouchableOpacity>
           </View>
         </View>
