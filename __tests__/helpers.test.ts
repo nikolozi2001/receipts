@@ -39,22 +39,24 @@ describe('Helper Functions', () => {
 
   describe('hasSearchQuery', () => {
     it('should detect meaningful search content', () => {
-      expect(hasSearchQuery({ 
-        receiptNumber: 'AB123', 
-        merchantName: '', 
-        searchQuery: '' 
-      })).toBe(true);
-
-      expect(hasSearchQuery({ 
-        receiptNumber: '', 
-        merchantName: '', 
-        searchQuery: '' 
-      })).toBe(false);
-
-      expect(hasSearchQuery({ 
-        receiptNumber: '  ', 
-        merchantName: '  ', 
-        searchQuery: '  ' 
+      expect(hasSearchQuery({
+        receiptNumber: 'AB123',
+        merchantName: '',
+        searchQuery: '',
+        carPlate: '',
+        searchMode: 'personal'
+      })).toBe(true);      expect(hasSearchQuery({
+        receiptNumber: '',
+        merchantName: '',
+        searchQuery: '',
+        carPlate: '',
+        searchMode: 'personal'
+      })).toBe(false);      expect(hasSearchQuery({
+        receiptNumber: '  ',
+        merchantName: '  ',
+        searchQuery: '  ',
+        carPlate: '  ',
+        searchMode: 'personal'
       })).toBe(false);
     });
   });

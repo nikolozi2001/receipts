@@ -55,6 +55,7 @@ const initialSearchForm: SearchFormData = {
   receiptNumber: '',
   merchantName: '',
   searchQuery: '',
+  carPlate: '',
   searchMode: 'car',
 };
 

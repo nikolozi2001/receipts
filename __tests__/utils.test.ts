@@ -7,6 +7,8 @@ describe('Helper Functions', () => {
         receiptNumber: 'AB-123-CD',
         merchantName: '',
         searchQuery: '',
+        carPlate: '',
+        searchMode: 'personal' as const,
       };
       expect(hasSearchQuery(searchForm)).toBe(true);
     });
@@ -16,6 +18,8 @@ describe('Helper Functions', () => {
         receiptNumber: '',
         merchantName: '',
         searchQuery: '',
+        carPlate: '',
+        searchMode: 'personal' as const,
       };
       expect(hasSearchQuery(searchForm)).toBe(false);
     });
@@ -25,6 +29,8 @@ describe('Helper Functions', () => {
         receiptNumber: '   ',
         merchantName: '  ',
         searchQuery: ' ',
+        carPlate: '  ',
+        searchMode: 'personal' as const,
       };
       expect(hasSearchQuery(searchForm)).toBe(false);
     });

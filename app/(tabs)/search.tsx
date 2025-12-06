@@ -45,7 +45,8 @@ export default function Search() {
           clearError={clearError}
         />
 
-        {searchForm.receiptNumber.trim().length > 0 && (
+        {((searchForm.searchMode === 'car' && searchForm.carPlate.trim().length > 0) || 
+          (searchForm.searchMode === 'personal' && searchForm.receiptNumber.trim().length > 0)) && (
           <ResultsTable
             protocolData={protocolData}
             isLoading={isLoading}

@@ -27,7 +27,7 @@ export function useProtocolData() {
 
   const handleSearch = () => {
     if (searchForm.searchMode === 'car') {
-      searchByCarNumber(searchForm.receiptNumber);
+      searchByCarNumber(searchForm.carPlate);
     } else {
       searchByPersonalData(
         searchForm.receiptNumber,

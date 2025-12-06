@@ -51,8 +51,12 @@ export const formatCarNumber = (carNumber: string): string => {
 /**
  * Check if search query has meaningful content
  */
-export const hasSearchQuery = (searchForm: { receiptNumber: string; merchantName: string; searchQuery: string }): boolean => {
-  return !!(searchForm.receiptNumber.trim() || searchForm.merchantName.trim() || searchForm.searchQuery.trim());
+export const hasSearchQuery = (searchForm: { receiptNumber: string; merchantName: string; searchQuery: string; carPlate: string; searchMode: 'personal' | 'car' }): boolean => {
+  if (searchForm.searchMode === 'car') {
+    return !!searchForm.carPlate.trim();
+  } else {
+    return !!(searchForm.receiptNumber.trim() || searchForm.merchantName.trim() || searchForm.searchQuery.trim());
+  }
 };
 
 /**

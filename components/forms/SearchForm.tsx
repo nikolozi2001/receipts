@@ -97,8 +97,8 @@ function CarSearchFields({ formData, onUpdateForm }: FieldsProps) {
         }}
         placeholder="ავტომობილის სახელმწიფო ნომერი"
         placeholderTextColor="#9ca3af"
-        value={formData.receiptNumber}
-        onChangeText={(text) => onUpdateForm({ receiptNumber: text })}
+        value={formData.carPlate}
+        onChangeText={(text) => onUpdateForm({ carPlate: text })}
         autoCapitalize="characters"
       />
     </View>
@@ -119,7 +119,7 @@ export function SearchForm({
   
   const canSearch = () => {
     if (formData.searchMode === 'car') {
-      return formData.receiptNumber.trim().length > 0;
+      return formData.carPlate.trim().length > 0;
     } else {
       return formData.receiptNumber.trim().length > 0 && 
              formData.merchantName.trim().length > 0 && 

@@ -43,5 +43,6 @@ export interface SearchFormData {
   receiptNumber: string;
   merchantName: string;
   searchQuery: string;
+  carPlate: string;
   searchMode: 'personal' | 'car';
 }
