@@ -75,15 +75,8 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
     );
   };
 
-  // Group violations by car plate
-  const groupedByPlate = protocolData?.results?.reduce((acc, protocol) => {
-    const plate = protocol.protocolAuto;
-    if (!acc[plate]) {
-      acc[plate] = [];
-    }
-    acc[plate].push(protocol);
-    return acc;
-  }, {} as Record<string, ProtocolItem[]>) || {};
+  // Show each violation individually
+  const violations = protocolData?.results || [];
 
   return (
     <View style={{ paddingHorizontal: 16 }}>
@@ -110,102 +103,102 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
               }}>
                 <Text style={{
                   color: 'white',
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: '600',
-                  flex: 1
+                  flex: 2
                 }}>ნომერი</Text>
                 <Text style={{
                   color: 'white',
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: '600',
-                  flex: 1,
+                  flex: 2,
                   textAlign: 'center'
-                }}>დარღვევა</Text>
+                }}>ქვითარი</Text>
                 <Text style={{
                   color: 'white',
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: '600',
-                  flex: 1,
+                  flex: 2,
                   textAlign: 'center'
-                }}>გამოქვეყნება</Text>
+                }}>თანხა</Text>
                 <Text style={{
                   color: 'white',
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: '600',
-                  flex: 1,
+                  flex: 2,
                   textAlign: 'center'
                 }}>ვადა</Text>
-                <View style={{ width: 30 }} />
+                <View style={{ width: 24 }} />
               </View>
             </View>
 
             {/* Table Rows */}
             <View>
-              {Object.entries(groupedByPlate).map(([plate, violations]) => (
-                <View key={plate}>
+              {violations.map((violation, index) => (
+                <View key={violation.protocolNo}>
                   {/* Main Row */}
                   <TouchableOpacity
                     style={{
                       flexDirection: 'row',
-                      justifyContent: 'space-between',
                       alignItems: 'center',
-                      paddingVertical: 10,
+                      paddingVertical: 12,
                       paddingHorizontal: 12,
-                      borderBottomWidth: 1,
-                      borderBottomColor: COLORS.neutral[100],
-                      backgroundColor: expandedRows.has(plate) ? '#f8fafc' : 'white'
+                      borderBottomWidth: index === violations.length - 1 ? 0 : 1,
+                      borderBottomColor: '#f1f5f9',
+                      backgroundColor: expandedRows.has(violation.protocolNo) ? '#f8fafc' : 'white'
                     }}
-                    onPress={() => toggleRow(plate)}
+                    onPress={() => toggleRow(violation.protocolNo)}
                     activeOpacity={0.7}
                   >
                     <Text style={{
-                      color: COLORS.neutral[900],
-                      fontSize: 14,
+                      color: '#0f172a',
+                      fontSize: 13,
                       fontWeight: '600',
-                      flex: 1
-                    }}>{plate}</Text>
+                      flex: 2
+                    }}>{violation.protocolAuto}</Text>
                     
                     <Text style={{
-                      color: COLORS.neutral[700],
-                      fontSize: 12,
-                      flex: 1,
+                      color: '#475569',
+                      fontSize: 11,
+                      flex: 2,
                       textAlign: 'center'
-                    }}>{violations[0].violationDate}</Text>
+                    }}>{violation.protocolNo}</Text>
                     
                     <Text style={{
-                      color: COLORS.neutral[700],
+                      color: '#dc2626',
                       fontSize: 12,
-                      flex: 1,
+                      fontWeight: '600',
+                      flex: 2,
                       textAlign: 'center'
-                    }}>{violations[0].publishDate}</Text>
+                    }}>{violation.protocolAmount}₾</Text>
                     
-                    <Text style={{
-                      color: COLORS.neutral[700],
-                      fontSize: 12,
-                      flex: 1,
-                      textAlign: 'center'
-                    }}>{violations[0].lastDate}</Text>
+                    <View style={{ flex: 2, alignItems: 'center' }}>
+                      <Text style={{
+                        color: violation.remainingDays <= 5 ? '#dc2626' : '#0f172a',
+                        fontSize: 11,
+                        fontWeight: violation.remainingDays <= 5 ? '600' : '400'
+                      }}>{violation.lastDate}</Text>
+                      {violation.remainingDays <= 5 && (
+                        <Text style={{
+                          color: '#dc2626',
+                          fontSize: 9,
+                          marginTop: 1
+                        }}>{violation.remainingDays <= 0 ? 'ვადაგასულია' : `${violation.remainingDays} დღე`}</Text>
+                      )}
+                    </View>
                     
-                    <View style={{ width: 30, alignItems: 'center' }}>
+                    <View style={{ width: 24, alignItems: 'center' }}>
                       <Ionicons 
-                        name={expandedRows.has(plate) ? "chevron-down" : "chevron-forward"} 
-                        size={16} 
-                        color={COLORS.primary[500]} 
+                        name={expandedRows.has(violation.protocolNo) ? "chevron-up" : "chevron-down"} 
+                        size={14} 
+                        color="#64748b" 
                       />
                     </View>
                   </TouchableOpacity>
 
                   {/* Expanded Details */}
-                  {expandedRows.has(plate) && (
-                    <View style={{
-                      backgroundColor: '#f8fafc',
-                      borderBottomWidth: 1,
-                      borderBottomColor: COLORS.neutral[100]
-                    }}>
-                      {violations.map((violation, index) => (
-                        <ViolationDetails key={violation.protocolNo} violation={violation} />
-                      ))}
-                    </View>
+                  {expandedRows.has(violation.protocolNo) && (
+                    <ViolationDetails violation={violation} />
                   )}
                 </View>
               ))}
