@@ -1,7 +1,7 @@
 import { ApiResponse } from '@/types/api';
 
 // API configuration - inline to avoid import issues
-const API_BASE_URL = __DEV__ ? 'https://7a6af19108ca.ngrok-free.app' : 'https://api.police.ge';
+const API_BASE_URL = __DEV__ ? 'https://da8bec28957b.ngrok-free.app' : 'https://api.police.ge';
 const API_TIMEOUT = 10000;
 const RETRY_ATTEMPTS = 3;
 const ENDPOINTS = {
