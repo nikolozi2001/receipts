@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 export function useProtocolData() {
   const {
     protocolData,
-    isLoading,
     error,
     loadingState,
     errorState,
@@ -17,6 +16,9 @@ export function useProtocolData() {
     retryLastSearch,
     clearError
   } = useAppStore();
+
+  // Get isLoading from loadingState directly
+  const isLoading = loadingState.isLoading;
 
   // Load all protocols on mount
   useEffect(() => {

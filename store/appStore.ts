@@ -48,7 +48,6 @@ interface AppState {
   retryLastSearch: () => Promise<void>;
   
   // Legacy getters for backward compatibility
-  isLoading: boolean;
   error: string | null;
 }
 
@@ -80,10 +79,6 @@ export const useAppStore = create<AppState>()((set, get) => ({
   searchForm: initialSearchForm,
   
   // Legacy getters
-  get isLoading() {
-    return get().loadingState.isLoading;
-  },
-  
   get error() {
     const state = get().errorState;
     return state.hasError ? state.errorMessage : null;
@@ -167,7 +162,11 @@ export const useAppStore = create<AppState>()((set, get) => ({
     clearError();
     
     try {
-      const response = await apiService.searchByCarNumber(carNumber);
+      // Ensure minimum loading time of 500ms for better UX
+      const [response] = await Promise.all([
+        apiService.searchByCarNumber(carNumber),
+        new Promise(resolve => setTimeout(resolve, 500))
+      ]);
       if (response.success) {
         set({ protocolData: response.data });
         
@@ -216,7 +215,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
   
-  searchByPersonalData: async (personalId: string, surname: string, birthDate: string) => {
+  searchByPersonalData: async (receiptNumber: string, merchantName: string, searchQuery: string) => {
     const { setLoadingState, setErrorState, clearError } = get();
     
     setLoadingState({ 
@@ -226,7 +225,11 @@ export const useAppStore = create<AppState>()((set, get) => ({
     clearError();
     
     try {
-      const response = await apiService.searchByPersonalData(personalId, surname, birthDate);
+      // Ensure minimum loading time of 500ms for better UX
+      const [response] = await Promise.all([
+        apiService.searchByPersonalData(receiptNumber, merchantName, searchQuery),
+        new Promise(resolve => setTimeout(resolve, 500))
+      ]);
       if (response.success) {
         set({ protocolData: response.data });
         

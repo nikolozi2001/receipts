@@ -358,13 +358,14 @@ export function SearchForm({
             <TouchableOpacity
               style={{
                 flex: 1,
-                backgroundColor: canSearch() ? '#1a237e' : '#9e9e9e',
+                backgroundColor: isLoading ? '#4f46e5' : (canSearch() ? '#1a237e' : '#9e9e9e'),
                 paddingVertical: 12,
                 borderRadius: 6,
                 alignItems: 'center',
                 flexDirection: 'row',
                 justifyContent: 'center',
-                opacity: (isLoading || !canSearch()) ? 0.7 : 1
+                opacity: (isLoading || !canSearch()) ? 0.8 : 1,
+                transform: isLoading ? [{ scale: 0.98 }] : [{ scale: 1 }]
               }}
               onPress={handleSearch}
               disabled={isLoading || !canSearch()}
@@ -378,7 +379,12 @@ export function SearchForm({
               ) : (
                 <Ionicons name="search" size={16} color="white" style={{ marginRight: 8 }} />
               )}
-              <Text style={{ color: 'white', fontWeight: '500', fontSize: 16 }}>
+              <Text style={{ 
+                color: 'white', 
+                fontWeight: '500', 
+                fontSize: 16,
+                opacity: isLoading ? 0.9 : 1
+              }}>
                 {isLoading ? (loadingState.loadingMessage || 'ძიება...') : 'ძიება'}
               </Text>
             </TouchableOpacity>
