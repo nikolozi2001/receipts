@@ -108,7 +108,12 @@ export const useAppStore = create<AppState>()((set, get) => ({
     searchForm: { ...state.searchForm, ...updates }
   })),
   
-  resetSearchForm: () => set({ searchForm: initialSearchForm }),
+  resetSearchForm: () => set((state) => ({ 
+    searchForm: { 
+      ...initialSearchForm, 
+      searchMode: state.searchForm.searchMode 
+    } 
+  })),
   
   fetchAllProtocols: async () => {
     const { setLoadingState, setErrorState, clearError } = get();
