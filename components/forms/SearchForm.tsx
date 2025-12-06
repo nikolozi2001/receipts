@@ -1,15 +1,8 @@
-import { BORDER_RADIUS, COLORS, SHADOWS, SPACING, TYPOGRAPHY } from '@/constants/design';
 import { ErrorState, LoadingState, SearchFormData } from '@/types/api';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
-// Validation patterns inline to avoid import issues
-const VALIDATION = {
-  CAR_NUMBER: /^[A-Za-zა-ჰ]{1,3}-?\d{2,4}-?[A-Za-zა-ჰ]{1,3}$|^\d{2,4}[A-Za-zა-ჰ]{1,3}$/,
-  PERSONAL_ID: /^\d{11}$/,
-};
 
 interface SearchFormProps {
   formData: SearchFormData;
@@ -21,6 +14,127 @@ interface SearchFormProps {
   onClear: () => void;
   onRetry?: () => void;
   clearError?: () => void;
+}
+
+interface FieldsProps {
+  formData: SearchFormData;
+  onUpdateForm: (updates: Partial<SearchFormData>) => void;
+}
+
+function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
+  return (
+    <View style={{ gap: 16 }}>
+      <View>
+        <Text style={{
+          fontSize: 14,
+          fontWeight: '500',
+          color: '#374151',
+          marginBottom: 6
+        }}>
+          ქვითრის ნომერი *
+        </Text>
+        <TextInput
+          style={{
+            borderWidth: 1,
+            borderColor: '#d1d5db',
+            borderRadius: 6,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 16,
+            backgroundColor: 'white'
+          }}
+          placeholder="შეიყვანეთ ქვითრის ნომერი"
+          placeholderTextColor="#9ca3af"
+          value={formData.receiptNumber}
+          onChangeText={(text) => onUpdateForm({ receiptNumber: text })}
+          autoCapitalize="none"
+        />
+      </View>
+
+      <View>
+        <Text style={{
+          fontSize: 14,
+          fontWeight: '500',
+          color: '#374151',
+          marginBottom: 6
+        }}>
+          მერჩანტი *
+        </Text>
+        <TextInput
+          style={{
+            borderWidth: 1,
+            borderColor: '#d1d5db',
+            borderRadius: 6,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 16,
+            backgroundColor: 'white'
+          }}
+          placeholder="შეიყვანეთ მერჩანტის სახელი"
+          placeholderTextColor="#9ca3af"
+          value={formData.merchantName}
+          onChangeText={(text) => onUpdateForm({ merchantName: text })}
+        />
+      </View>
+
+      <View>
+        <Text style={{
+          fontSize: 14,
+          fontWeight: '500',
+          color: '#374151',
+          marginBottom: 6
+        }}>
+          ძიების ტექსტი *
+        </Text>
+        <TextInput
+          style={{
+            borderWidth: 1,
+            borderColor: '#d1d5db',
+            borderRadius: 6,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 16,
+            backgroundColor: 'white'
+          }}
+          placeholder="შეიყვანეთ ძიების ტექსტი"
+          placeholderTextColor="#9ca3af"
+          value={formData.searchQuery}
+          onChangeText={(text) => onUpdateForm({ searchQuery: text })}
+        />
+      </View>
+    </View>
+  );
+}
+
+function CarSearchFields({ formData, onUpdateForm }: FieldsProps) {
+  return (
+    <View>
+      <Text style={{
+        fontSize: 14,
+        fontWeight: '500',
+        color: '#374151',
+        marginBottom: 6
+      }}>
+        ქვითრის ნომერი *
+      </Text>
+      <TextInput
+        style={{
+          borderWidth: 1,
+          borderColor: '#d1d5db',
+          borderRadius: 6,
+          paddingHorizontal: 12,
+          paddingVertical: 10,
+          fontSize: 16,
+          backgroundColor: 'white'
+        }}
+        placeholder="შეიყვანეთ ქვითრის ნომერი"
+        placeholderTextColor="#9ca3af"
+        value={formData.receiptNumber}
+        onChangeText={(text) => onUpdateForm({ receiptNumber: text })}
+        autoCapitalize="none"
+      />
+    </View>
+  );
 }
 
 export function SearchForm({ 
@@ -50,73 +164,108 @@ export function SearchForm({
     clearError?.();
     onSearch();
   };
+  
   return (
-    <View style={{ paddingHorizontal: SPACING['2xl'], paddingBottom: SPACING['2xl'] }}>
-      {/* Modern Tab Headers with Glassmorphism */}
-      <View style={{ 
-        flexDirection: 'row', 
-        backgroundColor: COLORS.neutral[50], 
-        borderRadius: BORDER_RADIUS.lg, 
-        overflow: 'hidden', 
-        marginBottom: SPACING['2xl'],
-        ...SHADOWS.sm
+    <View style={{ marginHorizontal: 24, marginTop: 16 }}>
+      
+      {/* Main Section Buttons */}
+      <View style={{
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 24,
+        gap: 12
       }}>
-        <View style={{ 
-          flex: 1, 
-          backgroundColor: COLORS.primary[500], 
-          paddingVertical: SPACING.lg, 
-          paddingHorizontal: SPACING.lg, 
-          alignItems: 'center',
-          ...SHADOWS.md
-        }}>
-          <Text style={{ color: COLORS.white, fontWeight: TYPOGRAPHY.fontWeight.medium, fontSize: TYPOGRAPHY.fontSize.sm }}>ჯარიმების ძიება</Text>
-        </View>
-        <View style={{ 
-          flex: 1, 
-          paddingVertical: SPACING.lg, 
-          paddingHorizontal: SPACING.lg, 
-          alignItems: 'center' 
-        }}>
-          <Text style={{ color: COLORS.neutral[400], fontWeight: TYPOGRAPHY.fontWeight.medium, fontSize: TYPOGRAPHY.fontSize.sm }}>ქვითრები</Text>
-        </View>
-      </View>
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            maxWidth: 180,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#1a237e',
+            paddingVertical: 10,
+            paddingHorizontal: 12,
+            borderRadius: 6
+          }}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            // Already active - video fines
+          }}
+        >
+          <Ionicons name="videocam" size={20} color="white" style={{ marginRight: 8 }} />
+          <Text style={{
+            color: 'white',
+            fontWeight: '600',
+            fontSize: 14
+          }}>
+            ვიდეოჯარიმა
+          </Text>
+        </TouchableOpacity>
 
-      {/* Enhanced Error/Success Display */}
-      {(errorState.hasError || (!errorState.hasError && errorState.errorMessage)) && (
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            maxWidth: 180,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'transparent',
+            borderWidth: 1,
+            borderColor: '#1a237e',
+            paddingVertical: 10,
+            paddingHorizontal: 12,
+            borderRadius: 6
+          }}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            // Switch to receipts mode
+          }}
+        >
+          <Ionicons name="receipt" size={20} color="#1a237e" style={{ marginRight: 8 }} />
+          <Text style={{
+            color: '#1a237e',
+            fontWeight: '600',
+            fontSize: 14
+          }}>
+            ქვითარი
+          </Text>
+        </TouchableOpacity>
+      </View>
+      
+      {/* Error Display */}
+      {errorState.hasError && (
         <View style={{
-          backgroundColor: errorState.hasError ? COLORS.error[50] : COLORS.success[50],
-          borderLeftWidth: 4,
-          borderLeftColor: errorState.hasError ? COLORS.error[500] : COLORS.success[500],
-          borderRadius: BORDER_RADIUS.md,
-          padding: SPACING.lg,
-          marginBottom: SPACING.lg,
-          ...SHADOWS.sm
+          marginBottom: 16,
+          padding: 16,
+          backgroundColor: '#fef2f2',
+          borderLeftWidth: 3,
+          borderLeftColor: '#dc2626',
+          borderRadius: 4
         }}>
           <Text style={{
-            color: errorState.hasError ? COLORS.error[600] : COLORS.success[600],
-            fontWeight: TYPOGRAPHY.fontWeight.medium,
-            fontSize: TYPOGRAPHY.fontSize.sm,
-            lineHeight: TYPOGRAPHY.lineHeight.relaxed * TYPOGRAPHY.fontSize.sm
+            color: '#dc2626',
+            fontSize: 14,
+            lineHeight: 20
           }}>
             {errorState.errorMessage}
           </Text>
-          {errorState.hasError && errorState.canRetry && onRetry && (
+          {errorState.canRetry && onRetry && (
             <TouchableOpacity
               style={{
-                backgroundColor: COLORS.error[500],
-                paddingVertical: SPACING.xs + 2,
-                paddingHorizontal: SPACING.lg,
-                borderRadius: BORDER_RADIUS.sm,
-                marginTop: SPACING.sm,
-                alignSelf: 'flex-start',
-                ...SHADOWS.sm
+                backgroundColor: '#dc2626',
+                paddingVertical: 8,
+                paddingHorizontal: 12,
+                borderRadius: 4,
+                marginTop: 8,
+                alignSelf: 'flex-start'
               }}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                 onRetry?.();
               }}
             >
-              <Text style={{ color: COLORS.white, fontWeight: TYPOGRAPHY.fontWeight.medium, fontSize: TYPOGRAPHY.fontSize.xs }}>
+              <Text style={{ color: 'white', fontWeight: '500', fontSize: 12 }}>
                 თავიდან ცდა
               </Text>
             </TouchableOpacity>
@@ -124,78 +273,89 @@ export function SearchForm({
         </View>
       )}
 
-      {/* Modern Search Card with Glassmorphism */}
-      <View style={{ 
-        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-        borderRadius: BORDER_RADIUS.xl, 
-        borderWidth: 1, 
-        borderColor: 'rgba(255, 255, 255, 0.2)',
-        ...SHADOWS.lg
-      }}>
-        <View style={{ padding: SPACING['2xl'] }}>
-          {/* Simple Mode Selection */}
-          <View style={{ 
-            flexDirection: 'row', 
-            backgroundColor: COLORS.neutral[100], 
-            borderRadius: BORDER_RADIUS.md, 
-            marginBottom: SPACING['2xl'],
-            padding: SPACING.xs
+      {/* Loading Status */}
+      {isLoading && (
+        <View style={{
+          padding: 16,
+          backgroundColor: '#e3f2fd',
+          borderLeftWidth: 3,
+          borderLeftColor: '#1976d2',
+          borderRadius: 4,
+          marginBottom: 16
+        }}>
+          <Text style={{
+            color: '#1565c0',
+            fontSize: 14
           }}>
-            <TouchableOpacity 
+            {loadingState.loadingMessage || 'მუშავდება...'}
+          </Text>
+        </View>
+      )}
+
+      {/* Main Search Form */}
+      <View style={{
+        backgroundColor: '#fafafa',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#e5e5e5'
+      }}>
+        <View style={{ padding: 24 }}>
+          
+          {/* Mode Selection */}
+          <View style={{
+            flexDirection: 'row',
+            backgroundColor: '#f5f5f5',
+            borderRadius: 6,
+            marginBottom: 20,
+            padding: 2
+          }}>
+            <TouchableOpacity
               style={{
                 flex: 1,
-                paddingVertical: 12,
-                paddingHorizontal: 16,
-                borderRadius: 8,
-                backgroundColor: formData.searchMode === 'personal' ? 'white' : 'transparent',
-                shadowColor: formData.searchMode === 'personal' ? '#000' : 'transparent',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: formData.searchMode === 'personal' ? 0.05 : 0,
-                shadowRadius: 2,
-                elevation: formData.searchMode === 'personal' ? 1 : 0
+                paddingVertical: 10,
+                paddingHorizontal: 12,
+                borderRadius: 4,
+                backgroundColor: formData.searchMode === 'personal' ? '#1a237e' : 'transparent',
+                alignItems: 'center'
               }}
               onPress={() => {
-                Haptics.selectionAsync();
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 onUpdateForm({ searchMode: 'personal' });
               }}
             >
               <Text style={{
-                textAlign: 'center',
+                color: formData.searchMode === 'personal' ? 'white' : '#666',
                 fontWeight: '500',
-                color: formData.searchMode === 'personal' ? '#2563EB' : '#6B7280'
+                fontSize: 14
               }}>
-                პირადი ნომერი
+                პირადი მონაცემები
               </Text>
             </TouchableOpacity>
             
-            <TouchableOpacity 
+            <TouchableOpacity
               style={{
                 flex: 1,
-                paddingVertical: 12,
-                paddingHorizontal: 16,
-                borderRadius: 8,
-                backgroundColor: formData.searchMode === 'car' ? 'white' : 'transparent',
-                shadowColor: formData.searchMode === 'car' ? '#000' : 'transparent',
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: formData.searchMode === 'car' ? 0.05 : 0,
-                shadowRadius: 2,
-                elevation: formData.searchMode === 'car' ? 1 : 0
+                paddingVertical: 10,
+                paddingHorizontal: 12,
+                borderRadius: 4,
+                backgroundColor: formData.searchMode === 'car' ? '#1a237e' : 'transparent',
+                alignItems: 'center'
               }}
               onPress={() => {
-                Haptics.selectionAsync();
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 onUpdateForm({ searchMode: 'car' });
               }}
             >
               <Text style={{
-                textAlign: 'center',
+                color: formData.searchMode === 'car' ? 'white' : '#666',
                 fontWeight: '500',
-                color: formData.searchMode === 'car' ? '#2563EB' : '#6B7280'
+                fontSize: 14
               }}>
-                ავტო ნომერი
+                ავტომობილი
               </Text>
             </TouchableOpacity>
           </View>
-          
+
           {/* Form Fields */}
           {formData.searchMode === 'personal' ? (
             <PersonalSearchFields 
@@ -209,48 +369,46 @@ export function SearchForm({
             />
           )}
 
-          {/* Enhanced Action Buttons */}
-          <View style={{ flexDirection: 'row', gap: SPACING.lg, marginTop: SPACING['2xl'] }}>
-            <TouchableOpacity 
+          {/* Action Buttons */}
+          <View style={{ flexDirection: 'row', gap: 12, marginTop: 20 }}>
+            <TouchableOpacity
               style={{
                 flex: 1,
-                backgroundColor: canSearch() ? COLORS.primary[500] : COLORS.neutral[400],
-                paddingVertical: SPACING.lg,
-                borderRadius: BORDER_RADIUS.md,
+                backgroundColor: canSearch() ? '#1a237e' : '#9e9e9e',
+                paddingVertical: 12,
+                borderRadius: 6,
                 alignItems: 'center',
                 flexDirection: 'row',
                 justifyContent: 'center',
-                opacity: (isLoading || !canSearch()) ? 0.7 : 1,
-                ...SHADOWS.md
+                opacity: (isLoading || !canSearch()) ? 0.7 : 1
               }}
               onPress={handleSearch}
               disabled={isLoading || !canSearch()}
             >
               {isLoading ? (
-                <ActivityIndicator 
-                  size="small" 
-                  color="white" 
-                  style={{ marginRight: 8 }} 
+                <ActivityIndicator
+                  size="small"
+                  color="white"
+                  style={{ marginRight: 8 }}
                 />
               ) : (
                 <Ionicons name="search" size={16} color="white" style={{ marginRight: 8 }} />
               )}
-              <Text style={{ color: 'white', fontWeight: '500' }}>
+              <Text style={{ color: 'white', fontWeight: '500', fontSize: 16 }}>
                 {isLoading ? (loadingState.loadingMessage || 'ძიება...') : 'ძიება'}
               </Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity 
+
+            <TouchableOpacity
               style={{
-                backgroundColor: COLORS.neutral[400],
-                paddingVertical: SPACING.lg,
-                paddingHorizontal: SPACING['2xl'],
-                borderRadius: BORDER_RADIUS.md,
+                backgroundColor: '#757575',
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                borderRadius: 6,
                 alignItems: 'center',
                 flexDirection: 'row',
                 justifyContent: 'center',
-                opacity: isLoading ? 0.5 : 1,
-                ...SHADOWS.sm
+                opacity: isLoading ? 0.5 : 1
               }}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -260,174 +418,11 @@ export function SearchForm({
               disabled={isLoading}
             >
               <Ionicons name="refresh" size={16} color="white" style={{ marginRight: 6 }} />
-              <Text style={{ color: COLORS.white, fontWeight: TYPOGRAPHY.fontWeight.semibold, fontSize: TYPOGRAPHY.fontSize.base }}>გასუფთავება</Text>
+              <Text style={{ color: 'white', fontWeight: '500', fontSize: 16 }}>გაწმენდა</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-    </View>
-  );
-}
-
-interface FieldsProps {
-  formData: SearchFormData;
-  onUpdateForm: (updates: Partial<SearchFormData>) => void;
-}
-
-function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
-  const [personalIdError, setPersonalIdError] = React.useState('');
-  const [birthDateError, setBirthDateError] = React.useState('');
-  
-  const validatePersonalId = (value: string) => {
-    if (!value.trim()) {
-      setPersonalIdError('');
-      return;
-    }
-    if (!/^\d{11}$/.test(value.trim())) {
-      setPersonalIdError('პირადი ნომერი უნდა შეიცავდეს 11 ციფრს');
-    } else {
-      setPersonalIdError('');
-    }
-  };
-  
-  const validateBirthDate = (value: string) => {
-    if (!value.trim()) {
-      setBirthDateError('');
-      return;
-    }
-    if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value.trim())) {
-      setBirthDateError('ფორმატი: DD/MM/YYYY');
-    } else {
-      setBirthDateError('');
-    }
-  };
-  
-  return (
-    <View style={{ gap: 16 }}>
-      <View>
-        <TextInput
-          style={{
-            borderWidth: 1,
-            borderColor: personalIdError ? '#DC2626' : '#D1D5DB',
-            borderRadius: 8,
-            paddingVertical: 12,
-            paddingHorizontal: 16,
-            fontSize: 16
-          }}
-          placeholder="პირადი ნომერი (11 ციფრი)"
-          placeholderTextColor="#9CA3AF"
-          value={formData.receiptNumber}
-          onChangeText={(text) => {
-            const cleanText = text.replace(/\D/g, '').substring(0, 11);
-            onUpdateForm({ receiptNumber: cleanText });
-            validatePersonalId(cleanText);
-          }}
-          keyboardType="numeric"
-          maxLength={11}
-        />
-        {personalIdError ? (
-          <Text style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>
-            {personalIdError}
-          </Text>
-        ) : null}
-      </View>
-      
-      <View style={{ flexDirection: 'row', gap: 12 }}>
-        <View style={{ flex: 1 }}>
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: '#D1D5DB',
-              borderRadius: 8,
-              paddingVertical: 12,
-              paddingHorizontal: 16,
-              fontSize: 16
-            }}
-            placeholder="გვარი"
-            placeholderTextColor="#9CA3AF"
-            value={formData.merchantName}
-            onChangeText={(text) => onUpdateForm({ merchantName: text })}
-            autoCapitalize="words"
-          />
-        </View>
-        
-        <View style={{ flex: 1 }}>
-          <TextInput
-            style={{
-              borderWidth: 1,
-              borderColor: birthDateError ? '#DC2626' : '#D1D5DB',
-              borderRadius: 8,
-              paddingVertical: 12,
-              paddingHorizontal: 16,
-              fontSize: 16
-            }}
-            placeholder="DD/MM/YYYY"
-            placeholderTextColor="#9CA3AF"
-            value={formData.searchQuery}
-            onChangeText={(text) => {
-              // Auto-format date input
-              let formatted = text.replace(/\D/g, '');
-              if (formatted.length >= 3) formatted = formatted.slice(0,2) + '/' + formatted.slice(2);
-              if (formatted.length >= 6) formatted = formatted.slice(0,5) + '/' + formatted.slice(5,9);
-              onUpdateForm({ searchQuery: formatted });
-              validateBirthDate(formatted);
-            }}
-            keyboardType="numeric"
-            maxLength={10}
-          />
-          {birthDateError ? (
-            <Text style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>
-              {birthDateError}
-            </Text>
-          ) : null}
-        </View>
-      </View>
-    </View>
-  );
-}
-
-function CarSearchFields({ formData, onUpdateForm }: FieldsProps) {
-  const [carNumberError, setCarNumberError] = React.useState('');
-  
-  const validateCarNumber = (value: string) => {
-    if (!value.trim()) {
-      setCarNumberError('');
-      return;
-    }
-    if (!VALIDATION.CAR_NUMBER.test(value.trim())) {
-      setCarNumberError('არასწორი ავტო ნომრის ფორმატი');
-    } else {
-      setCarNumberError('');
-    }
-  };
-  
-  return (
-    <View>
-      <TextInput
-        style={{
-          borderWidth: 1,
-          borderColor: carNumberError ? '#DC2626' : '#D1D5DB',
-          borderRadius: 8,
-          paddingVertical: 12,
-          paddingHorizontal: 16,
-          fontSize: 16
-        }}
-        placeholder="მაგ: AB123CD ან 123ABC"
-        placeholderTextColor="#9CA3AF"
-        value={formData.receiptNumber}
-        onChangeText={(text) => {
-          const cleanText = text.toUpperCase().trim();
-          onUpdateForm({ receiptNumber: cleanText });
-          validateCarNumber(cleanText);
-        }}
-        autoCapitalize="characters"
-        maxLength={8}
-      />
-      {carNumberError ? (
-        <Text style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>
-          {carNumberError}
-        </Text>
-      ) : null}
     </View>
   );
 }

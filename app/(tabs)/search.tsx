@@ -1,10 +1,10 @@
-import { SearchForm } from '@/components/forms/SearchForm';
-import { ResultsTable } from '@/components/tables/ResultsTable';
-import { Header, TitleSection } from '@/components/ui/Header';
-import { useProtocolData } from '@/hooks/useProtocolData';
-import { hasSearchQuery } from '@/utils/helpers';
-import React from 'react';
-import { ScrollView, StatusBar, View } from 'react-native';
+import { SearchForm } from "@/components/forms/SearchForm";
+import { ResultsTable } from "@/components/tables/ResultsTable";
+import { Header } from "@/components/ui/Header";
+import { useProtocolData } from "@/hooks/useProtocolData";
+import { hasSearchQuery } from "@/utils/helpers";
+import React from "react";
+import { ScrollView, StatusBar, View } from "react-native";
 
 export default function Search() {
   const {
@@ -21,24 +21,18 @@ export default function Search() {
   } = useProtocolData();
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-      
-      <Header 
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      <StatusBar barStyle="light-content" backgroundColor="#1a237e" />
+
+      <Header
         title="საქართველოს პოლიცია"
         subtitle="ადმინისტრაციული ჯარიმების მონაცემთა ბაზა"
-        lastUpdated="17.11.2025"
       />
 
-      <ScrollView 
-        style={{ flex: 1, backgroundColor: '#F9FAFB' }} 
+      <ScrollView
+        style={{ flex: 1, backgroundColor: "white" }}
         showsVerticalScrollIndicator={false}
       >
-        <TitleSection
-          title="ადმინისტრაციული ჯარიმების ძიება"
-          description="მოძებნეთ აქტიური ადმინისტრაციული ჯარიმები ავტომობილის ნომრით ან პირადი ნომრით. სისტემა წარმოადგენს ოფიციალურ ინფორმაციას."
-        />
-
         <SearchForm
           formData={searchForm}
           isLoading={isLoading}
@@ -58,7 +52,7 @@ export default function Search() {
           hasSearchQuery={hasSearchQuery(searchForm)}
         />
 
-        <View style={{ height: 32 }} />
+        <View style={{ height: 24 }} />
       </ScrollView>
     </View>
   );
