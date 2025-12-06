@@ -413,9 +413,10 @@ export function SearchForm({
           <View style={{ flexDirection: 'row', gap: 12, marginTop: 24 }}>
             <TouchableOpacity
               style={{
-                flex: 2,
+                flex: 1,
                 backgroundColor: isLoading ? '#4f46e5' : (canSearch() ? '#1a237e' : '#9e9e9e'),
                 paddingVertical: 14,
+                paddingHorizontal: 16,
                 borderRadius: 8,
                 alignItems: 'center',
                 flexDirection: 'row',
@@ -453,9 +454,10 @@ export function SearchForm({
 
             <TouchableOpacity
               style={{
-                flex: 1,
+                minWidth: 120,
                 backgroundColor: '#6b7280',
                 paddingVertical: 14,
+                paddingHorizontal: 20,
                 borderRadius: 8,
                 alignItems: 'center',
                 flexDirection: 'row',
@@ -469,11 +471,11 @@ export function SearchForm({
               }}
               disabled={isLoading}
             >
-              <Ionicons name="close-circle" size={16} color="white" style={{ marginRight: 6 }} />
+              <Ionicons name="close-circle" size={16} color="white" style={{ marginRight: 8 }} />
               <Text style={{ 
                 color: 'white', 
                 fontWeight: '500', 
-                fontSize: 14,
+                fontSize: 15,
                 letterSpacing: 0.2
               }}>გაწმენდა</Text>
             </TouchableOpacity>

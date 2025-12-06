@@ -11,7 +11,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://192.168.3.3:3001"
+        "EXPO_PUBLIC_API_URL": "https://da8bec28957b.ngrok-free.app"
       }
     },
     "preview": {
@@ -20,7 +20,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://192.168.3.3:3001"
+        "EXPO_PUBLIC_API_URL": "https://da8bec28957b.ngrok-free.app"
       }
     },
     "production": {
@@ -29,7 +29,7 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://your-actual-server.com"
+        "EXPO_PUBLIC_API_URL": "https://api.police.ge"
       }
     },
     "apk": {
@@ -37,7 +37,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://192.168.3.3:3001"
+        "EXPO_PUBLIC_API_URL": "https://da8bec28957b.ngrok-free.app"
       }
     }
   },

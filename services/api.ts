@@ -1,7 +1,7 @@
 import { ApiResponse } from '@/types/api';
 
-// API configuration - inline to avoid import issues
-const API_BASE_URL = __DEV__ ? 'https://da8bec28957b.ngrok-free.app' : 'https://api.police.ge';
+// API configuration - use environment variable with fallbacks
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || (__DEV__ ? 'https://da8bec28957b.ngrok-free.app' : 'https://api.police.ge');
 const API_TIMEOUT = 10000;
 const RETRY_ATTEMPTS = 3;
 const ENDPOINTS = {
