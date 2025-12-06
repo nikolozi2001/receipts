@@ -25,14 +25,6 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
   return (
     <View style={{ gap: 16 }}>
       <View>
-        <Text style={{
-          fontSize: 14,
-          fontWeight: '500',
-          color: '#374151',
-          marginBottom: 6
-        }}>
-          ქვითრის ნომერი *
-        </Text>
         <TextInput
           style={{
             borderWidth: 1,
@@ -43,7 +35,7 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
             fontSize: 16,
             backgroundColor: 'white'
           }}
-          placeholder="შეიყვანეთ ქვითრის ნომერი"
+          placeholder="პირადი ნომერი"
           placeholderTextColor="#9ca3af"
           value={formData.receiptNumber}
           onChangeText={(text) => onUpdateForm({ receiptNumber: text })}
@@ -52,14 +44,6 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
       </View>
 
       <View>
-        <Text style={{
-          fontSize: 14,
-          fontWeight: '500',
-          color: '#374151',
-          marginBottom: 6
-        }}>
-          მერჩანტი *
-        </Text>
         <TextInput
           style={{
             borderWidth: 1,
@@ -70,7 +54,7 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
             fontSize: 16,
             backgroundColor: 'white'
           }}
-          placeholder="შეიყვანეთ მერჩანტის სახელი"
+          placeholder="გვარი"
           placeholderTextColor="#9ca3af"
           value={formData.merchantName}
           onChangeText={(text) => onUpdateForm({ merchantName: text })}
@@ -78,14 +62,6 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
       </View>
 
       <View>
-        <Text style={{
-          fontSize: 14,
-          fontWeight: '500',
-          color: '#374151',
-          marginBottom: 6
-        }}>
-          ძიების ტექსტი *
-        </Text>
         <TextInput
           style={{
             borderWidth: 1,
@@ -96,7 +72,7 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
             fontSize: 16,
             backgroundColor: 'white'
           }}
-          placeholder="შეიყვანეთ ძიების ტექსტი"
+          placeholder="დაბადების თარიღი"
           placeholderTextColor="#9ca3af"
           value={formData.searchQuery}
           onChangeText={(text) => onUpdateForm({ searchQuery: text })}
@@ -109,14 +85,6 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
 function CarSearchFields({ formData, onUpdateForm }: FieldsProps) {
   return (
     <View>
-      <Text style={{
-        fontSize: 14,
-        fontWeight: '500',
-        color: '#374151',
-        marginBottom: 6
-      }}>
-        ქვითრის ნომერი *
-      </Text>
       <TextInput
         style={{
           borderWidth: 1,
@@ -127,11 +95,11 @@ function CarSearchFields({ formData, onUpdateForm }: FieldsProps) {
           fontSize: 16,
           backgroundColor: 'white'
         }}
-        placeholder="შეიყვანეთ ქვითრის ნომერი"
+        placeholder="ავტომობილის სახელმწიფო ნომერი"
         placeholderTextColor="#9ca3af"
         value={formData.receiptNumber}
         onChangeText={(text) => onUpdateForm({ receiptNumber: text })}
-        autoCapitalize="none"
+        autoCapitalize="characters"
       />
     </View>
   );
@@ -301,57 +269,73 @@ export function SearchForm({
       }}>
         <View style={{ padding: 24 }}>
           
-          {/* Mode Selection */}
+          {/* Search Method Tabs */}
           <View style={{
             flexDirection: 'row',
-            backgroundColor: '#f5f5f5',
-            borderRadius: 6,
+            backgroundColor: 'white',
             marginBottom: 20,
-            padding: 2
+            borderBottomWidth: 1,
+            borderBottomColor: '#e5e5e5'
           }}>
             <TouchableOpacity
               style={{
                 flex: 1,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 4,
-                backgroundColor: formData.searchMode === 'personal' ? '#1a237e' : 'transparent',
-                alignItems: 'center'
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                borderBottomWidth: 2,
+                borderBottomColor: formData.searchMode === 'personal' ? '#1a237e' : 'transparent'
               }}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 onUpdateForm({ searchMode: 'personal' });
               }}
             >
+              <Ionicons 
+                name="person" 
+                size={18} 
+                color={formData.searchMode === 'personal' ? '#1a237e' : '#666'} 
+                style={{ marginRight: 8 }} 
+              />
               <Text style={{
-                color: formData.searchMode === 'personal' ? 'white' : '#666',
-                fontWeight: '500',
+                color: formData.searchMode === 'personal' ? '#1a237e' : '#666',
+                fontWeight: formData.searchMode === 'personal' ? '600' : '500',
                 fontSize: 14
               }}>
-                პირადი მონაცემები
+                პიროვნების მონაცემებით ძიება
               </Text>
             </TouchableOpacity>
             
             <TouchableOpacity
               style={{
                 flex: 1,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: 4,
-                backgroundColor: formData.searchMode === 'car' ? '#1a237e' : 'transparent',
-                alignItems: 'center'
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingVertical: 12,
+                paddingHorizontal: 16,
+                borderBottomWidth: 2,
+                borderBottomColor: formData.searchMode === 'car' ? '#1a237e' : 'transparent'
               }}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 onUpdateForm({ searchMode: 'car' });
               }}
             >
+              <Ionicons 
+                name="car" 
+                size={18} 
+                color={formData.searchMode === 'car' ? '#1a237e' : '#666'} 
+                style={{ marginRight: 8 }} 
+              />
               <Text style={{
-                color: formData.searchMode === 'car' ? 'white' : '#666',
-                fontWeight: '500',
+                color: formData.searchMode === 'car' ? '#1a237e' : '#666',
+                fontWeight: formData.searchMode === 'car' ? '600' : '500',
                 fontSize: 14
               }}>
-                ავტომობილი
+                ავტომობილის ნომრით ძიება
               </Text>
             </TouchableOpacity>
           </View>

@@ -45,12 +45,14 @@ export default function Search() {
           clearError={clearError}
         />
 
-        <ResultsTable
-          protocolData={protocolData}
-          isLoading={isLoading}
-          searchMode={searchForm.searchMode}
-          hasSearchQuery={hasSearchQuery(searchForm)}
-        />
+        {searchForm.receiptNumber.trim().length > 0 && (
+          <ResultsTable
+            protocolData={protocolData}
+            isLoading={isLoading}
+            searchMode={searchForm.searchMode}
+            hasSearchQuery={hasSearchQuery(searchForm)}
+          />
+        )}
 
         <View style={{ height: 24 }} />
       </ScrollView>
