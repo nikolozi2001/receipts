@@ -1,8 +1,9 @@
 import { ErrorState, LoadingState, SearchFormData } from '@/types/api';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import React from 'react';
-import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 interface SearchFormProps {
   formData: SearchFormData;
@@ -22,6 +23,44 @@ interface FieldsProps {
 }
 
 function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  
+  // Initialize date from existing searchQuery or default to current date
+  const getInitialDate = () => {
+    if (formData.searchQuery) {
+      try {
+        const parts = formData.searchQuery.split('.');
+        if (parts.length === 3) {
+          const [day, month, year] = parts;
+          return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        }
+      } catch {
+        // Fallback to current date if parsing fails
+      }
+    }
+    return new Date();
+  };
+  
+  const [selectedDate, setSelectedDate] = useState(getInitialDate);
+
+  const onDateChange = (event: any, date?: Date) => {
+    setShowDatePicker(Platform.OS === 'ios');
+    if (date) {
+      setSelectedDate(date);
+      const formattedDate = date.toLocaleDateString('ka-GE', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).replace(/\//g, '.');
+      onUpdateForm({ searchQuery: formattedDate });
+    }
+  };
+
+  const showDatePickerHandler = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setShowDatePicker(true);
+  };
+
   return (
     <View style={{ gap: 16 }}>
       <View>
@@ -62,21 +101,38 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
       </View>
 
       <View>
-        <TextInput
+        <TouchableOpacity
           style={{
             borderWidth: 1,
             borderColor: '#d1d5db',
             borderRadius: 6,
             paddingHorizontal: 12,
             paddingVertical: 10,
-            fontSize: 16,
-            backgroundColor: 'white'
+            backgroundColor: 'white',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
           }}
-          placeholder="დაბადების თარიღი"
-          placeholderTextColor="#9ca3af"
-          value={formData.searchQuery}
-          onChangeText={(text) => onUpdateForm({ searchQuery: text })}
-        />
+          onPress={showDatePickerHandler}
+        >
+          <Text style={{
+            fontSize: 16,
+            color: formData.searchQuery ? '#000' : '#9ca3af'
+          }}>
+            {formData.searchQuery || 'დაბადების თარიღი'}
+          </Text>
+          <Ionicons name="calendar" size={20} color="#9ca3af" />
+        </TouchableOpacity>
+        
+        {showDatePicker && (
+          <DateTimePicker
+            value={selectedDate}
+            mode="date"
+            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+            onChange={onDateChange}
+            maximumDate={new Date()}
+          />
+        )}
       </View>
     </View>
   );
