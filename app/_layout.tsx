@@ -9,12 +9,12 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <StatusBar 
         barStyle="light-content" 
-        backgroundColor="#1a237e"
+        backgroundColor={Platform.OS === 'android' ? "#1a237e" : undefined}
         translucent={Platform.OS === 'android'}
       />
       <SafeAreaView 
         style={{ flex: 1 }} 
-        edges={Platform.OS === 'android' ? ['left', 'right'] : ['left', 'right', 'bottom']}
+        edges={Platform.OS === 'android' ? ['left', 'right'] : ['top', 'left', 'right', 'bottom']}
       >
         <ErrorBoundary>
           <Slot />

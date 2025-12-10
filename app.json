@@ -10,6 +10,14 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.general126.receipts",
+      "buildNumber": "1",
+      "icon": "./assets/images/icon.png",
+      "splash": {
+        "image": "./assets/images/splash-icon.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff"
+      },
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true,
@@ -19,9 +27,18 @@
               "NSTemporaryExceptionAllowsInsecureHTTPLoads": true,
               "NSTemporaryExceptionAllowsInsecureHTTPSLoads": true,
               "NSTemporaryExceptionMinimumTLSVersion": "TLSv1.1"
+            },
+            "da8bec28957b.ngrok-free.app": {
+              "NSTemporaryExceptionAllowsInsecureHTTPLoads": true
+            },
+            "api.police.ge": {
+              "NSTemporaryExceptionAllowsInsecureHTTPLoads": false
             }
           }
-        }
+        },
+        "UILaunchStoryboardName": "SplashScreen",
+        "UIStatusBarStyle": "UIStatusBarStyleLightContent",
+        "UIViewControllerBasedStatusBarAppearance": false
       }
     },
     "android": {
