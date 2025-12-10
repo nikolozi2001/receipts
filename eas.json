@@ -18,6 +18,20 @@
         "EXPO_PUBLIC_API_URL": "https://da8bec28957b.ngrok-free.app"
       }
     },
+    "staging": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true,
+        "buildConfiguration": "Release"
+      },
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://da8bec28957b.ngrok-free.app"
+      }
+    },
     "preview": {
       "distribution": "internal",
       "ios": {
