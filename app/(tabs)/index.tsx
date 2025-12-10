@@ -6,12 +6,11 @@ import {
 } from "@/constants/design";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
-import { ScrollView, StatusBar, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
 export default function Index() {
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white }}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a237e" />
 
       <Header
         title="საქართველოს პოლიცია"

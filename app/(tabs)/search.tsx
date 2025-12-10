@@ -4,7 +4,7 @@ import { Header } from "@/components/ui/Header";
 import { useProtocolData } from "@/hooks/useProtocolData";
 import { hasSearchQuery } from "@/utils/helpers";
 import React from "react";
-import { ScrollView, StatusBar, View } from "react-native";
+import { ScrollView, View } from "react-native";
 
 export default function Search() {
   const {
@@ -22,7 +22,6 @@ export default function Search() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a237e" />
 
       <Header
         title="საქართველოს პოლიცია"

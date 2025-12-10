@@ -31,9 +31,13 @@
         "backgroundImage": "./assets/images/shss.png",
         "monochromeImage": "./assets/images/shss.png"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "package": "com.general126.receipts"
+      "edgeToEdgeEnabled": false,
+      "predictiveBackGestureEnabled": true,
+      "package": "com.general126.receipts",
+      "navigationBar": {
+        "visible": "sticky-immersive",
+        "backgroundColor": "#ffffff"
+      }
     },
     "web": {
       "output": "static",
