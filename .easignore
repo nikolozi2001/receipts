@@ -1,0 +1,6 @@
+# Additional ignore patterns for EAS Build
+.expo/
+node_modules/
+**/.DS_Store
+**/*.log
+.env*.local
