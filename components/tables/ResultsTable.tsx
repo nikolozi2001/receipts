@@ -2,9 +2,9 @@ import { COLORS, SHADOWS } from '@/constants/design';
 import { ProtocolData, ProtocolItem } from '@/types/api';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import React, { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface ResultsTableProps {
   protocolData: ProtocolData | null;
@@ -39,7 +39,6 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
               ? t('search.results.noViolationsCar')
               : t('search.results.noViolationsPersonal')
             }
-            }
           </Text>
         </View>
       );
@@ -51,15 +50,15 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
           {isLoading ? (
             <>
               <Ionicons name="time" size={48} color={COLORS.primary[500]} style={{marginBottom: 12}} />
-              <Text style={{ color: COLORS.primary[600], fontSize: 16, fontWeight: '600', marginBottom: 8 }}>დატვირთვა...</Text>
-              <Text style={{ color: '#6b7280', textAlign: 'center', paddingHorizontal: 24, fontSize: 14 }}>გთხოვთ მოიცადოთ</Text>
+              <Text style={{ color: COLORS.primary[600], fontSize: 16, fontWeight: '600', marginBottom: 8 }}>{t('search.results.loading')}</Text>
+              <Text style={{ color: '#6b7280', textAlign: 'center', paddingHorizontal: 24, fontSize: 14 }}>{t('search.results.pleaseWait')}</Text>
             </>
           ) : (
             <>
               <Ionicons name="search" size={48} color={COLORS.neutral[500]} style={{marginBottom: 12}} />
-              <Text style={{ color: COLORS.neutral[600], fontSize: 16, fontWeight: '600', marginBottom: 8 }}>ძიების დასაწყებად</Text>
+              <Text style={{ color: COLORS.neutral[600], fontSize: 16, fontWeight: '600', marginBottom: 8 }}>{t('search.results.toStartSearch')}</Text>
               <Text style={{ color: '#6b7280', textAlign: 'center', paddingHorizontal: 24, fontSize: 14 }}>
-                შეიყვანეთ ავტომობილის ნომერი ან პირადი ნომერი
+                {t('search.results.enterSearchParams')}
               </Text>
             </>
           )}
@@ -70,9 +69,9 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
     return (
       <View style={{ paddingVertical: 32, alignItems: 'center' }}>
         <MaterialIcons name="description" size={48} color={COLORS.warning[500]} style={{marginBottom: 12}} />
-        <Text style={{ color: COLORS.warning[600], fontSize: 16, fontWeight: '600', marginBottom: 8 }}>მონაცემები არ მოიძებნა</Text>
+        <Text style={{ color: COLORS.warning[600], fontSize: 16, fontWeight: '600', marginBottom: 8 }}>{t('search.results.dataNotFound')}</Text>
         <Text style={{ color: '#6b7280', textAlign: 'center', paddingHorizontal: 24, fontSize: 14 }}>
-          სცადეთ სხვა ძიების პარამეტრები
+          {t('search.results.tryOtherParams')}
         </Text>
       </View>
     );
@@ -116,21 +115,21 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
                   fontWeight: '600',
                   flex: 2,
                   textAlign: 'center'
-                }}>ქვითარი</Text>
+                }}>{t('search.results.receipt')}</Text>
                 <Text style={{
                   color: 'white',
                   fontSize: 11,
                   fontWeight: '600',
                   flex: 2,
                   textAlign: 'center'
-                }}>თანხა</Text>
+                }}>{t('search.results.amount')}</Text>
                 <Text style={{
                   color: 'white',
                   fontSize: 11,
                   fontWeight: '600',
                   flex: 2,
                   textAlign: 'center'
-                }}>ვადა</Text>
+                }}>{t('search.results.date')}</Text>
                 <View style={{ width: 24 }} />
               </View>
             </View>
@@ -220,6 +219,7 @@ interface ViolationDetailsProps {
 }
 
 function ViolationDetails({ violation }: ViolationDetailsProps) {
+  const { t } = useTranslation();
   const handlePayment = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     // TODO: Implement payment functionality
@@ -252,7 +252,7 @@ function ViolationDetails({ violation }: ViolationDetailsProps) {
           color: COLORS.neutral[900],
           fontSize: 14,
           fontWeight: '600'
-        }}>ქვითრის ნომერი: {violation.protocolNo}</Text>
+        }}>{t('search.results.protocol')}: {violation.protocolNo}</Text>
         
         <TouchableOpacity
           style={{
@@ -271,14 +271,14 @@ function ViolationDetails({ violation }: ViolationDetailsProps) {
             color: 'white',
             fontSize: 10,
             fontWeight: '600'
-          }}>გადახდა</Text>
+          }}>{t('common.payment')}</Text>
         </TouchableOpacity>
       </View>
 
       {/* Violation Details */}
       <View style={{ gap: 6 }}>
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>დარღვევის თარიღი: </Text>
+          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.violationDate')}: </Text>
           <Text style={{ color: COLORS.neutral[900], fontSize: 12 }}>{violation.violationDate}</Text>
         </View>
 
@@ -288,27 +288,27 @@ function ViolationDetails({ violation }: ViolationDetailsProps) {
         </View>
 
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>ასკ მუხლი: </Text>
+          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.lawArticle')}: </Text>
           <Text style={{ color: COLORS.neutral[900], fontSize: 12 }}>{violation.protocolLaw}</Text>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>თანხა: </Text>
-          <Text style={{ color: COLORS.error[600], fontSize: 12, fontWeight: '600' }}>{violation.protocolAmount} ლარი</Text>
+          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.amount')}: </Text>
+          <Text style={{ color: COLORS.error[600], fontSize: 12, fontWeight: '600' }}>{violation.protocolAmount} {t('common.currency')}</Text>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.publishDate', { defaultValue: 'Publication Date' })}: </Text>
+          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.publishDate')}: </Text>
           <Text style={{ color: COLORS.neutral[900], fontSize: 12 }}>{violation.publishDate}</Text>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.paymentDue', { defaultValue: 'Payment Due' })}: </Text>
+          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.paymentDue')}: </Text>
           <Text style={{ color: COLORS.neutral[900], fontSize: 12 }}>{violation.lastDate}</Text>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.remaining', { defaultValue: 'Remaining' })}: </Text>
+          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.remaining')}: </Text>
           <Text style={{ 
             color: violation.remainingDays <= 5 ? COLORS.error[600] : COLORS.success[600], 
             fontSize: 12, 

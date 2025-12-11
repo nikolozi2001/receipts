@@ -8,10 +8,10 @@ export default function Profile() {
   const { t } = useTranslation();
   
   const profileOptions = [
-    { icon: "⚙️", title: t('common.settings'), subtitle: "Application configuration" },
-    { icon: "📊", title: "Statistics", subtitle: "Search history" },
-    { icon: "❓", title: "Help", subtitle: "Instructions and FAQ" },
-    { icon: "📞", title: "Contact", subtitle: t('header.police') },
+    { icon: "⚙️", title: t('common.settings'), subtitle: t('profile.settingsSubtitle') },
+    { icon: "📊", title: t('common.statistics'), subtitle: t('profile.statisticsSubtitle') },
+    { icon: "❓", title: t('common.help'), subtitle: t('profile.helpSubtitle') },
+    { icon: "📞", title: t('common.contact'), subtitle: t('header.police') },
   ];
 
   return (
@@ -46,7 +46,7 @@ export default function Profile() {
               fontWeight: '500',
               marginBottom: 4
             }}>{t('common.profile')}</Text>
-            <Text style={{ color: '#6B7280', fontSize: 14 }}>Anonymous Mode</Text>
+            <Text style={{ color: '#6B7280', fontSize: 14 }}>{t('common.anonymousMode')}</Text>
           </View>
         </View>
 
@@ -112,13 +112,13 @@ export default function Profile() {
               color: '#1E3A8A',
               fontWeight: '500',
               marginBottom: 8
-            }}>ინფორმაცია</Text>
+            }}>{t('common.information')}</Text>
             <Text style={{
               color: '#1D4ED8',
               fontSize: 14,
               lineHeight: 20
             }}>
-              ეს აპლიკაცია უზრუნველყოფს წვდომას საქართველოს პოლიციის ადმინისტრაციული ჯარიმების ღია მონაცემთა ბაზაზე.
+              {t('profile.appDescription')}
             </Text>
           </View>
         </View>

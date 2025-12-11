@@ -18,7 +18,14 @@ const ka = {
     submit: "ძიება",
     cancel: "გაუქმება",
     tryAgain: "თავიდან ცდა",
-    close: "დახურვა"
+    close: "დახურვა",
+    statistics: "სტატისტიკა",
+    help: "დახმარება",
+    contact: "კონტაქტი",
+    information: "ინფორმაცია",
+    anonymousMode: "ანონიმური რეჟიმი",
+    payment: "გადახდა",
+    currency: "ლარი"
   },
   errors: {
     networkError: "ინტერნეტ კავშირი არ არის ხელმისაწვდომი",
@@ -63,6 +70,16 @@ const ka = {
     paymentInfo: "გადახდის ინფორმაცია",
     paymentDescription: "მიიღეთ ინფორმაცია გადახდის მეთოდებისა და სტატუსის შესახებ"
   },
+  profile: {
+    settingsSubtitle: "აპლიკაციის კონფიგურაცია",
+    statistics: "სტატისტიკა",
+    statisticsSubtitle: "ძიების ისტორია",
+    help: "დახმარება",
+    helpSubtitle: "ინსტრუქციები და ხშირი კითხვები",
+    contact: "კონტაქტი",
+    information: "ინფორმაცია",
+    appDescription: "ეს აპლიკაცია უზრუნველყოფს წვდომას საქართველოს პოლიციის ადმინისტრაციული ჯარიმების ღია მონაცემთა ბაზაზე."
+  },
   search: {
     video: "ვიდეოჯარიმა",
     receipt: "ქვითარი",
@@ -95,6 +112,14 @@ const ka = {
       noViolations: "ჯარიმები არ არის",
       noViolationsCar: "ამ ავტომობილის ნომერზე აქტიური ჯარიმები არ არის",
       noViolationsPersonal: "მოცემულ მონაცემებზე ინფორმაცია არ მოიძებნა",
+      loading: "დატვირთვა...",
+      pleaseWait: "გთხოვთ მოიცადოთ",
+      toStartSearch: "ძიების დასაწყებად",
+      enterSearchParams: "შეიყვანეთ ავტომობილის ნომერი ან პირადი ნომერი",
+      dataNotFound: "მონაცემები არ მოიძებნა",
+      tryOtherParams: "სცადეთ სხვა ძიების პარამეტრები",
+      violationDate: "დარღვევის თარიღი",
+      lawArticle: "ასკ მუხლი",
       found: "ნაპოვნია {{count}} ჯარიმა",
       publishDate: "გამოქვეყნების თარიღი",
       paymentDue: "გადახდის ვადა",
@@ -127,7 +152,14 @@ const en = {
     submit: "Search",
     cancel: "Cancel",
     tryAgain: "Try Again",
-    close: "Close"
+    close: "Close",
+    statistics: "Statistics",
+    help: "Help",
+    contact: "Contact",
+    information: "Information",
+    anonymousMode: "Anonymous Mode",
+    payment: "Payment",
+    currency: "GEL"
   },
   errors: {
     networkError: "Internet connection is not available",
@@ -172,6 +204,16 @@ const en = {
     paymentInfo: "Payment Information",
     paymentDescription: "Get information about payment methods and status"
   },
+  profile: {
+    settingsSubtitle: "Application configuration",
+    statistics: "Statistics",
+    statisticsSubtitle: "Search history",
+    help: "Help",
+    helpSubtitle: "Instructions and FAQ",
+    contact: "Contact",
+    information: "Information",
+    appDescription: "This application provides access to the open database of administrative fines of the Police of Georgia."
+  },
   search: {
     video: "Video Fine",
     receipt: "Fine Receipt",
@@ -204,6 +246,14 @@ const en = {
       noViolations: "No fines",
       noViolationsCar: "No active fines for this car number",
       noViolationsPersonal: "No information found for the provided data",
+      loading: "Loading...",
+      pleaseWait: "Please wait",
+      toStartSearch: "To start search",
+      enterSearchParams: "Enter car number or personal number",
+      dataNotFound: "Data not found",
+      tryOtherParams: "Try other search parameters",
+      violationDate: "Violation Date",
+      lawArticle: "Law Article",
       found: "Found {{count}} fines",
       publishDate: "Publication Date",
       paymentDue: "Payment Due",
