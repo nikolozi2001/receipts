@@ -5,26 +5,22 @@ import {
   TYPOGRAPHY,
 } from "@/constants/design";
 import { MaterialIcons } from "@expo/vector-icons";
-import React from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
 
 export default function Index() {
+  const { t } = useTranslation();
+  
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white }}>
 
-      <Header
-        title="საქართველოს პოლიცია"
-        subtitle="ადმინისტრაციული ჯარიმების მონაცემთა ბაზა"
-      />
+      <Header />
 
       <ScrollView
         style={{ flex: 1, backgroundColor: COLORS.white }}
         showsVerticalScrollIndicator={false}
       >
-        <TitleSection
-          title="მთავარი გვერდი"
-          description="საქართველოს შინაგან საქმეთა სამინისტროს ოფიციალური პლატფორმა"
-        />
+        <TitleSection />
 
         {/* Official Announcement Section */}
         <View style={{ paddingHorizontal: SPACING["2xl"], paddingTop: SPACING.xl }}>
@@ -54,7 +50,7 @@ export default function Index() {
                 color: '#1a237e',
                 flex: 1
               }}>
-                ოფიციალური შეტყობინება
+                {t('home.announcement')}
               </Text>
             </View>
 
@@ -64,7 +60,7 @@ export default function Index() {
               lineHeight: TYPOGRAPHY.lineHeight.relaxed * TYPOGRAPHY.fontSize.base,
               marginBottom: SPACING.lg
             }}>
-              გაცნობებთ, რომ თუ სამართალდამრღვევისთვის საჯარიმო ქვითრის ჩაბარება ვერ ხერხდება ადმინისტრაციული სამართალდარღვევათა კოდექსით დადგენილი წესით, საჯარიმო ქვითარი საჯაროდ გამოქვეყნდება შინაგან საქმეთა სამინისტროს საჯარო ინფორმაციის ვებგვერდზე.
+              {t('home.announcementText')}
             </Text>
 
             <View style={{

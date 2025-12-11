@@ -3,7 +3,6 @@ import { ResultsTable } from "@/components/tables/ResultsTable";
 import { Header } from "@/components/ui/Header";
 import { useProtocolData } from "@/hooks/useProtocolData";
 import { hasSearchQuery } from "@/utils/helpers";
-import React from "react";
 import { ScrollView, View } from "react-native";
 
 export default function Search() {
@@ -20,13 +19,11 @@ export default function Search() {
     clearError,
   } = useProtocolData();
 
+
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
 
-      <Header
-        title="საქართველოს პოლიცია"
-        subtitle="ადმინისტრაციული ჯარიმების მონაცემთა ბაზა"
-      />
+      <Header/>
 
       <ScrollView
         style={{ flex: 1, backgroundColor: "white" }}

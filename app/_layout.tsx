@@ -1,4 +1,6 @@
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import "@/i18n";
 import { Slot } from "expo-router";
 import { Platform, StatusBar } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -16,9 +18,11 @@ export default function RootLayout() {
         style={{ flex: 1 }} 
         edges={Platform.OS === 'android' ? ['left', 'right'] : ['top', 'left', 'right', 'bottom']}
       >
-        <ErrorBoundary>
-          <Slot />
-        </ErrorBoundary>
+        <LanguageProvider>
+          <ErrorBoundary>
+            <Slot />
+          </ErrorBoundary>
+        </LanguageProvider>
       </SafeAreaView>
     </SafeAreaProvider>
   );

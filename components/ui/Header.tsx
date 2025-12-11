@@ -1,14 +1,16 @@
 import { COLORS, SHADOWS, SPACING, TYPOGRAPHY } from '@/constants/design';
-import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, ImageBackground, Text, View } from 'react-native';
 
 interface HeaderProps {
-  title: string;
+  title?: string;
   subtitle?: string;
   lastUpdated?: string;
 }
 
 export function Header({ title, subtitle, lastUpdated }: HeaderProps) {
+  const { t } = useTranslation();
+  
   return (
     <ImageBackground
       source={require('../../assets/images/services_bg_1440.png')}
@@ -52,9 +54,9 @@ export function Header({ title, subtitle, lastUpdated }: HeaderProps) {
             textShadowRadius: 2,
             letterSpacing: 0.5
           }}>
-            შინაგან საქმეთა სამინისტრო
+            {title || t('header.ministry')}
           </Text>
-          {subtitle && (
+          {(subtitle || t('header.database')) && (
             <Text style={{
               color: '#ffd700',
               fontSize: TYPOGRAPHY.fontSize.sm,
@@ -65,7 +67,7 @@ export function Header({ title, subtitle, lastUpdated }: HeaderProps) {
               textShadowRadius: 2,
               fontWeight: TYPOGRAPHY.fontWeight.semibold
             }}>
-              {subtitle}
+              {subtitle || t('header.database')}
             </Text>
           )}
         </View>
@@ -75,11 +77,13 @@ export function Header({ title, subtitle, lastUpdated }: HeaderProps) {
 }
 
 interface TitleSectionProps {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
 }
 
 export function TitleSection({ title, description }: TitleSectionProps) {
+  const { t } = useTranslation();
+  
   return (
     <View style={{ paddingHorizontal: SPACING['2xl'], paddingVertical: SPACING['2xl'], backgroundColor: COLORS.white }}>
       <Text style={{
@@ -89,7 +93,7 @@ export function TitleSection({ title, description }: TitleSectionProps) {
         textAlign: 'center',
         marginBottom: SPACING.lg
       }}>
-        {title}
+        {title || t('home.title')}
       </Text>
       <Text style={{
         fontSize: TYPOGRAPHY.fontSize.sm,
@@ -98,7 +102,7 @@ export function TitleSection({ title, description }: TitleSectionProps) {
         lineHeight: TYPOGRAPHY.lineHeight.relaxed * TYPOGRAPHY.fontSize.sm,
         paddingHorizontal: SPACING.lg
       }}>
-        {description}
+        {description || t('home.description')}
       </Text>
     </View>
   );
