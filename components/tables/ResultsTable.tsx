@@ -108,7 +108,7 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
                   fontSize: 11,
                   fontWeight: '600',
                   flex: 2
-                }}>ნომერი</Text>
+                }}>{t('search.results.plate')}</Text>
                 <Text style={{
                   color: 'white',
                   fontSize: 11,
@@ -283,7 +283,7 @@ function ViolationDetails({ violation }: ViolationDetailsProps) {
         </View>
 
         <View style={{ flexDirection: 'row', flex: 1 }}>
-          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>დარღვევის ადგილი: </Text>
+          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.violationPlace')}: </Text>
           <Text style={{ color: COLORS.neutral[900], fontSize: 12, flex: 1, flexWrap: 'wrap' }}>{violation.protocolPlace}</Text>
         </View>
 

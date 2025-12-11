@@ -132,7 +132,9 @@ const ka = {
       paid: "გადახდილი",
       unpaid: "გადაუხდელი",
       expired: "ვადაგასულია",
-      daysLeft: "დღე"
+      daysLeft: "დღე",
+      receipt: "ქვითარი",
+      violationPlace: "დარღვევის ადგილი"
     }
   }
 };
@@ -266,7 +268,9 @@ const en = {
       paid: "Paid",
       unpaid: "Unpaid",
       expired: "Expired",
-      daysLeft: "days"
+      daysLeft: "days",
+      receipt: "Receipt",
+      violationPlace: "Violation Place"
     }
   }
 };

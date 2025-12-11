@@ -1,4 +1,3 @@
-import { Header } from "@/components/ui/Header";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { COLORS } from "@/constants/design";
 import { useTranslation } from "react-i18next";
@@ -16,7 +15,7 @@ export default function Profile() {
 
   return (
     <View style={{ flex: 1, backgroundColor: COLORS.white }}>
-      <Header />
+      {/* <Header /> */}
       
       <ScrollView style={{ flex: 1, backgroundColor: 'white' }}>
         {/* Clean Profile Header */}
