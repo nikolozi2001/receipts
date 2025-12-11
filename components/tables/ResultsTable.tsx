@@ -4,6 +4,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 interface ResultsTableProps {
   protocolData: ProtocolData | null;
@@ -13,6 +14,7 @@ interface ResultsTableProps {
 }
 
 export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQuery }: ResultsTableProps) {
+  const { t } = useTranslation();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   const toggleRow = (protocolNo: string) => {
@@ -31,11 +33,12 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
       return (
         <View style={{ paddingVertical: 32, alignItems: 'center' }}>
           <Ionicons name="checkmark-circle" size={48} color={COLORS.success[500]} style={{marginBottom: 12}} />
-          <Text style={{ color: COLORS.success[600], fontSize: 16, fontWeight: '600', marginBottom: 8 }}>ჯარიმები არ არის</Text>
+          <Text style={{ color: COLORS.success[600], fontSize: 16, fontWeight: '600', marginBottom: 8 }}>{t('search.results.noViolations')}</Text>
           <Text style={{ color: '#6b7280', textAlign: 'center', paddingHorizontal: 24, fontSize: 14 }}>
             {searchMode === 'car' 
-              ? 'ამ ავტომობილის ნომერზე აქტიური ჯარიმები არ არის' 
-              : 'მოცემულ მონაცემებზე ინფორმაცია არ მოიძებნა'
+              ? t('search.results.noViolationsCar')
+              : t('search.results.noViolationsPersonal')
+            }
             }
           </Text>
         </View>
@@ -183,7 +186,7 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
                           color: '#dc2626',
                           fontSize: 9,
                           marginTop: 1
-                        }}>{violation.remainingDays <= 0 ? 'ვადაგასულია' : `${violation.remainingDays} დღე`}</Text>
+                        }}>{violation.remainingDays <= 0 ? t('search.results.expired') : `${violation.remainingDays} ${t('search.results.daysLeft')}`}</Text>
                       )}
                     </View>
                     
@@ -295,23 +298,23 @@ function ViolationDetails({ violation }: ViolationDetailsProps) {
         </View>
 
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>გამოქვეყნების თარიღი: </Text>
+          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.publishDate', { defaultValue: 'Publication Date' })}: </Text>
           <Text style={{ color: COLORS.neutral[900], fontSize: 12 }}>{violation.publishDate}</Text>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>გადახდის ვადა: </Text>
+          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.paymentDue', { defaultValue: 'Payment Due' })}: </Text>
           <Text style={{ color: COLORS.neutral[900], fontSize: 12 }}>{violation.lastDate}</Text>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
-          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>დარჩენილია: </Text>
+          <Text style={{ color: COLORS.neutral[600], fontSize: 12, fontWeight: '500' }}>{t('search.results.remaining', { defaultValue: 'Remaining' })}: </Text>
           <Text style={{ 
             color: violation.remainingDays <= 5 ? COLORS.error[600] : COLORS.success[600], 
             fontSize: 12, 
             fontWeight: '600' 
           }}>
-            {violation.remainingDays <= 0 ? 'ვადა გავიდა' : `${violation.remainingDays} დღე`}
+            {violation.remainingDays <= 0 ? t('search.results.expired') : `${violation.remainingDays} ${t('search.results.daysLeft')}`}
           </Text>
         </View>
       </View>

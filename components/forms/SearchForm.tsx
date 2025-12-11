@@ -28,9 +28,10 @@ interface SearchFormProps {
 interface FieldsProps {
   formData: SearchFormData;
   onUpdateForm: (updates: Partial<SearchFormData>) => void;
+  t: (key: string) => string;
 }
 
-function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
+function PersonalSearchFields({ formData, onUpdateForm, t }: FieldsProps) {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   // Initialize date from existing searchQuery or default to current date
@@ -84,7 +85,7 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
             fontSize: 16,
             backgroundColor: "white",
           }}
-          placeholder="პირადი ნომერი"
+          placeholder={t('search.placeholder.personalNumber')}
           placeholderTextColor="#9ca3af"
           value={formData.receiptNumber}
           onChangeText={(text) => onUpdateForm({ receiptNumber: text })}
@@ -103,7 +104,7 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
             fontSize: 16,
             backgroundColor: "white",
           }}
-          placeholder="გვარი"
+          placeholder={t('search.placeholder.lastName')}
           placeholderTextColor="#9ca3af"
           value={formData.merchantName}
           onChangeText={(text) => onUpdateForm({ merchantName: text })}
@@ -131,7 +132,7 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
               color: formData.searchQuery ? "#000" : "#9ca3af",
             }}
           >
-            {formData.searchQuery || "დაბადების თარიღი"}
+            {formData.searchQuery || t('search.birthDate')}
           </Text>
           <Ionicons name="calendar" size={20} color="#9ca3af" />
         </TouchableOpacity>
@@ -150,8 +151,7 @@ function PersonalSearchFields({ formData, onUpdateForm }: FieldsProps) {
   );
 }
 
-function CarSearchFields({ formData, onUpdateForm }: FieldsProps) {
-  const { t } = useTranslation();
+function CarSearchFields({ formData, onUpdateForm, t }: FieldsProps) {
   
   return (
     <View>
@@ -165,7 +165,7 @@ function CarSearchFields({ formData, onUpdateForm }: FieldsProps) {
           fontSize: 16,
           backgroundColor: "white",
         }}
-        placeholder={t("search.vehicleData")}
+        placeholder={t("search.placeholder.carPlate")}
         placeholderTextColor="#9ca3af"
         value={formData.carPlate}
         onChangeText={(text) => onUpdateForm({ carPlate: text })}
@@ -454,9 +454,10 @@ export function SearchForm({
             <PersonalSearchFields
               formData={formData}
               onUpdateForm={onUpdateForm}
+              t={t}
             />
           ) : (
-            <CarSearchFields formData={formData} onUpdateForm={onUpdateForm} />
+            <CarSearchFields formData={formData} onUpdateForm={onUpdateForm} t={t} />
           )}
 
           {/* Action Buttons */}

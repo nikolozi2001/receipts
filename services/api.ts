@@ -1,3 +1,5 @@
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/constants';
+import i18n from '@/i18n';
 import { ApiResponse } from '@/types/api';
 
 // API configuration - use environment variable with fallbacks
@@ -8,22 +10,6 @@ const ENDPOINTS = {
   CAR_SEARCH: '/api/receipt-by-car',
   PERSONAL_SEARCH: '/api/receipt-by-person',
   ALL_PROTOCOLS: '/api/protocols'
-};
-
-// Error messages in Georgian
-const ERROR_MESSAGES = {
-  NETWORK_ERROR: 'ინტერნეტ კავშირი არ არის ხელმისაწვდომი',
-  SERVER_ERROR: 'სერვერთან კავშირის პრობლემა',
-  TIMEOUT_ERROR: 'მოთხოვნის დრო ამოიწურა',
-  INVALID_INPUT: 'შეიყვანეთ სწორი მონაცემები',
-  NO_DATA: 'მონაცემები არ მოიძებნა',
-  VALIDATION_ERROR: 'მონაცემების ვალიდაცია ვერ მოხერხდა'
-};
-
-// Success messages
-const SUCCESS_MESSAGES = {
-  DATA_LOADED: 'მონაცემები წარმატებით ჩაიტვირთა',
-  SEARCH_COMPLETED: 'ძიება წარმატებით დასრულდა'
 };
 
 class ApiService {
@@ -70,7 +56,7 @@ class ApiService {
       if (!contentType || !contentType.includes('application/json')) {
         return {
           success: false,
-          message: ERROR_MESSAGES.SERVER_ERROR,
+          message: i18n.t(ERROR_MESSAGES.SERVER_ERROR),
           data: { count: 0, results: [] }
         };
       }
@@ -82,7 +68,7 @@ class ApiService {
       if (error instanceof Error && error.name === 'AbortError') {
         return {
           success: false,
-          message: ERROR_MESSAGES.TIMEOUT_ERROR,
+          message: i18n.t(ERROR_MESSAGES.TIMEOUT_ERROR),
           data: { count: 0, results: [] }
         };
       }
@@ -117,23 +103,23 @@ class ApiService {
   
   private getErrorMessage(status: number): string {
     switch (status) {
-      case 400: return 'არასწორი მოთხოვნა';
-      case 401: return 'ავტორიზაცია საჭიროა';
-      case 403: return 'წვდომა აკრძალულია';
-      case 404: return 'მონაცემები არ მოიძებნა';
-      case 429: return 'ძალიან ბევრი მოთხოვნა, სცადეთ მოგვიანებით';
-      case 500: return ERROR_MESSAGES.SERVER_ERROR;
-      default: return ERROR_MESSAGES.NETWORK_ERROR;
+      case 400: return i18n.t('errors.invalidInput');
+      case 401: return i18n.t('errors.unauthorized', { defaultValue: 'Authorization required' });
+      case 403: return i18n.t('errors.forbidden', { defaultValue: 'Access forbidden' });
+      case 404: return i18n.t('errors.noData');
+      case 429: return i18n.t('errors.tooManyRequests', { defaultValue: 'Too many requests, try again later' });
+      case 500: return i18n.t(ERROR_MESSAGES.SERVER_ERROR);
+      default: return i18n.t(ERROR_MESSAGES.NETWORK_ERROR);
     }
   }
   
   private getNetworkErrorMessage(error: unknown): string {
     if (error instanceof Error) {
       if (error.message.includes('fetch')) {
-        return ERROR_MESSAGES.NETWORK_ERROR;
+        return i18n.t(ERROR_MESSAGES.NETWORK_ERROR);
       }
     }
-    return ERROR_MESSAGES.SERVER_ERROR;
+    return i18n.t(ERROR_MESSAGES.SERVER_ERROR);
   }
   
   private async makeRequest(url: string, options: RequestInit = {}): Promise<ApiResponse> {
@@ -145,7 +131,7 @@ class ApiService {
     // Return empty state for initial load - user needs to search
     return {
       success: true,
-      message: 'შეიყვანეთ ძიების პარამეტრები',
+      message: i18n.t('search.placeholder.enterParams', { defaultValue: 'Enter search parameters' }),
       data: { count: 0, results: [] }
     };
   }
@@ -154,7 +140,7 @@ class ApiService {
     if (!carNumber || !carNumber.trim()) {
       return {
         success: false,
-        message: ERROR_MESSAGES.INVALID_INPUT,
+        message: i18n.t(ERROR_MESSAGES.INVALID_INPUT),
         data: { count: 0, results: [] }
       };
     }
@@ -175,14 +161,14 @@ class ApiService {
         console.log('✅ Found', response.data.results.length, 'violations');
         return {
           success: true,
-          message: `${SUCCESS_MESSAGES.SEARCH_COMPLETED} - ნაპოვნია ${response.data.results.length} ჯარიმა`,
+          message: `${i18n.t(SUCCESS_MESSAGES.SEARCH_COMPLETED)} - ${i18n.t('search.results.found', { defaultValue: 'Found {{count}} fines', count: response.data.results.length })}`,
           data: response.data
         };
       } else {
         console.log('✅ No violations found for car:', cleanCarNumber);
         return {
           success: true,
-          message: '✅ ამ ავტომობილზე აქტიური ჯარიმები არ არის',
+          message: `✅ ${i18n.t('search.results.noViolationsCar')}`,
           data: { count: 0, results: [] }
         };
       }
@@ -269,14 +255,14 @@ class ApiService {
         console.log('✅ Found', response.data.results.length, 'violations for personal data');
         return {
           success: true,
-          message: `${SUCCESS_MESSAGES.SEARCH_COMPLETED} - ნაპოვნია ${response.data.results.length} ჯარიმა`,
+          message: `${i18n.t(SUCCESS_MESSAGES.SEARCH_COMPLETED)} - ${i18n.t('search.results.found', { defaultValue: 'Found {{count}} fines', count: response.data.results.length })}`,
           data: response.data
         };
       } else {
         console.log('✅ No violations found for personal data');
         return {
           success: true,
-          message: '✅ მოცემულ მონაცემებზე აქტიური ჯარიმები არ არის',
+          message: `✅ ${i18n.t('search.results.noViolationsPersonal')}`,
           data: { count: 0, results: [] }
         };
       }

@@ -16,7 +16,29 @@ const ka = {
     retry: "თავიდან ცდა",
     clear: "გასუფთავება",
     submit: "ძიება",
-    cancel: "გაუქმება"
+    cancel: "გაუქმება",
+    tryAgain: "თავიდან ცდა",
+    close: "დახურვა"
+  },
+  errors: {
+    networkError: "ინტერნეტ კავშირი არ არის ხელმისაწვდომი",
+    serverError: "სერვერთან კავშირის პრობლემა",
+    timeoutError: "მოთხოვნის დრო ამოიწურა",
+    invalidInput: "შეიყვანეთ სწორი მონაცემები",
+    noData: "მონაცემები არ მოიძებნა",
+    validationError: "მონაცემების ვალიდაცია ვერ მოხერხდა",
+    somethingWentWrong: "რაღაც არასწორად მოხდა",
+    unexpectedError: "მოულოდნელი შეცდომა მოხდა"
+  },
+  success: {
+    dataLoaded: "მონაცემები წარმატებით ჩაიტვირთა",
+    searchCompleted: "ძიება წარმატებით დასრულდა"
+  },
+  loading: {
+    searching: "მოძებნა...",
+    loading: "იტვირთება...",
+    validating: "ამოწმდება...",
+    connecting: "სერვერთან დაკავშირება..."
   },
   header: {
     ministry: "შინაგან საქმეთა სამინისტრო",
@@ -29,6 +51,10 @@ const ka = {
     description: "საქართველოს შინაგან საქმეთა სამინისტროს ოფიციალური პლატფორმა",
     announcement: "ოფიციალური განცხადება",
     announcementText: "ეს პლატფორმა საშუალებას გაძლევთ შეამოწმოთ ადმინისტრაციული ჯარიმების სტატუსი და მონაცემები ოფიციალური სახელმწიფო წყაროებიდან.",
+    importantNote: "მნიშვნელოვანი: საჯარიმო ქვითარი პირისათვის ჩაბარებულად მიიჩნევა საჯაროდ გამოქვეყნებიდან 30-ე დღეს.",
+    officialPlatformTitle: "ოფიციალური პლატფორმა",
+    officialPlatformText: "ეს აპლიკაცია წარმოადგენს საქართველოს შინაგან საქმეთა სამინისტროს ოფიციალურ პლატფორმას ადმინისტრაციული ჯარიმების შესასწავლად.",
+    realTimeInfo: "ყველა ინფორმაცია რეალურ დროშია განახლებული",
     features: "ფუნქციები",
     searchFines: "ჯარიმების ძიება",
     searchDescription: "მოიძიეთ ჯარიმები პირადი ნომრით ან პროტოკოლის ნომრით",
@@ -45,26 +71,43 @@ const ka = {
     vehicleData: "ავტომობილის ნომრით ძიება",
     personalNumber: "პირადი ნომერი",
     protocolNumber: "პროტოკოლის ნომერი",
+    lastName: "გვარი",
     birthDate: "დაბადების თარიღი",
+    carPlate: "ავტომობილის სახელმწიფო ნომერი",
     placeholder: {
       personalNumber: "შეიყვანეთ თქვენი 11-ციფრიანი პირადი ნომერი",
       protocolNumber: "შეიყვანეთ პროტოკოლის ნომერი",
-      birthDate: "აირჩიეთ დაბადების თარიღი"
+      lastName: "შეიყვანეთ გვარი",
+      birthDate: "აირჩიეთ დაბადების თარიღი",
+      carPlate: "შეიყვანეთ ავტომობილის ნომერი"
     },
     validation: {
-      personalNumberRequired: "პირადი ნომერი აუცილებელია",
+      personalNumberRequired: "შეიყვანეთ პირადი ნომერი",
       personalNumberLength: "პირადი ნომერი უნდა შეიცავდეს 11 ციფრს",
-      birthDateRequired: "დაბადების თარიღი აუცილებელია",
-      protocolNumberRequired: "პროტოკოლის ნომერი აუცილებელია"
+      lastNameRequired: "შეიყვანეთ გვარი",
+      birthDateRequired: "შეიყვანეთ დაბადების თარიღი",
+      birthDateFormat: "დაბადების თარიღი უნდა იყოს ფორმატში: DD.MM.YYYY",
+      protocolNumberRequired: "შეიყვანეთ პროტოკოლის ნომერი",
+      carPlateRequired: "შეიყვანეთ ავტომობილის ნომერი"
     },
     results: {
       noData: "მონაცემები ვერ მოიძებნა",
-      protocol: "პროტოკოლი",
+      noViolations: "ჯარიმები არ არის",
+      noViolationsCar: "ამ ავტომობილის ნომერზე აქტიური ჯარიმები არ არის",
+      noViolationsPersonal: "მოცემულ მონაცემებზე ინფორმაცია არ მოიძებნა",
+      found: "ნაპოვნია {{count}} ჯარიმა",
+      publishDate: "გამოქვეყნების თარიღი",
+      paymentDue: "გადახდის ვადა",
+      remaining: "დარჩენილია",
+      protocol: "ქვითარი",
+      plate: "ნომერი",
       amount: "თანხა",
-      date: "თარიღი",
+      date: "ვადა",
       status: "სტატუსი",
       paid: "გადახდილი",
-      unpaid: "გადაუხდელი"
+      unpaid: "გადაუხდელი",
+      expired: "ვადაგასულია",
+      daysLeft: "დღე"
     }
   }
 };
@@ -82,7 +125,29 @@ const en = {
     retry: "Retry",
     clear: "Clear",
     submit: "Search",
-    cancel: "Cancel"
+    cancel: "Cancel",
+    tryAgain: "Try Again",
+    close: "Close"
+  },
+  errors: {
+    networkError: "Internet connection is not available",
+    serverError: "Server connection problem",
+    timeoutError: "Request timeout exceeded",
+    invalidInput: "Please enter valid data",
+    noData: "No data found",
+    validationError: "Data validation failed",
+    somethingWentWrong: "Something went wrong",
+    unexpectedError: "An unexpected error occurred"
+  },
+  success: {
+    dataLoaded: "Data loaded successfully",
+    searchCompleted: "Search completed successfully"
+  },
+  loading: {
+    searching: "Searching...",
+    loading: "Loading...",
+    validating: "Validating...",
+    connecting: "Connecting to server..."
   },
   header: {
     ministry: "Ministry of Internal Affairs",
@@ -95,6 +160,10 @@ const en = {
     description: "Official platform of the Ministry of Internal Affairs of Georgia",
     announcement: "Official Announcement",
     announcementText: "This platform allows you to check the status and data of administrative fines from official government sources.",
+    importantNote: "Important: Fine receipt is considered delivered to person on the 30th day from public announcement.",
+    officialPlatformTitle: "Official Platform", 
+    officialPlatformText: "This application represents the official platform of the Ministry of Internal Affairs of Georgia for studying administrative fines.",
+    realTimeInfo: "All information is updated in real time",
     features: "Features",
     searchFines: "Search Fines",
     searchDescription: "Search for fines by personal number or protocol number",
@@ -111,26 +180,43 @@ const en = {
     title: "Search Fines",
     personalNumber: "Personal Number",
     protocolNumber: "Protocol Number",
+    lastName: "Last Name",
     birthDate: "Birth Date",
+    carPlate: "Car License Plate Number",
     placeholder: {
       personalNumber: "Enter your 11-digit personal number",
       protocolNumber: "Enter protocol number",
-      birthDate: "Select birth date"
+      lastName: "Enter last name",
+      birthDate: "Select birth date",
+      carPlate: "Enter car license plate"
     },
     validation: {
-      personalNumberRequired: "Personal number is required",
+      personalNumberRequired: "Enter personal number",
       personalNumberLength: "Personal number must contain 11 digits",
-      birthDateRequired: "Birth date is required",
-      protocolNumberRequired: "Protocol number is required"
+      lastNameRequired: "Enter last name",
+      birthDateRequired: "Enter birth date",
+      birthDateFormat: "Birth date must be in format: DD.MM.YYYY",
+      protocolNumberRequired: "Enter protocol number",
+      carPlateRequired: "Enter car license plate"
     },
     results: {
-      noData: "No data found",
-      protocol: "Protocol",
+      noData: "Data could not be found",
+      noViolations: "No fines",
+      noViolationsCar: "No active fines for this car number",
+      noViolationsPersonal: "No information found for the provided data",
+      found: "Found {{count}} fines",
+      publishDate: "Publication Date",
+      paymentDue: "Payment Due",
+      remaining: "Remaining",
+      protocol: "Receipt",
+      plate: "Plate",
       amount: "Amount",
-      date: "Date",
+      date: "Due Date",
       status: "Status",
       paid: "Paid",
-      unpaid: "Unpaid"
+      unpaid: "Unpaid",
+      expired: "Expired",
+      daysLeft: "days"
     }
   }
 };

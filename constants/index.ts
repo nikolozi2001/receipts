@@ -67,26 +67,26 @@ export const VALIDATION = {
   MAX_SEARCH_HISTORY: 10,
 } as const;
 
-// Error messages in Georgian
+// Message translation keys
 export const ERROR_MESSAGES = {
-  NETWORK_ERROR: 'ინტერნეტ კავშირი არ არის ხელმისაწვდომი',
-  SERVER_ERROR: 'სერვერთან კავშირის პრობლემა',
-  TIMEOUT_ERROR: 'მოთხოვნის დრო ამოიწურა',
-  INVALID_INPUT: 'შეიყვანეთ სწორი მონაცემები',
-  NO_DATA: 'მონაცემები არ მოიძებნა',
-  VALIDATION_ERROR: 'მონაცემების ვალიდაცია ვერ მოხერხდა'
+  NETWORK_ERROR: 'errors.networkError',
+  SERVER_ERROR: 'errors.serverError',
+  TIMEOUT_ERROR: 'errors.timeoutError',
+  INVALID_INPUT: 'errors.invalidInput',
+  NO_DATA: 'errors.noData',
+  VALIDATION_ERROR: 'errors.validationError'
 };
 
 // Success messages
 export const SUCCESS_MESSAGES = {
-  DATA_LOADED: 'მონაცემები წარმატებით ჩაიტვირთა',
-  SEARCH_COMPLETED: 'ძიება წარმატებით დასრულდა'
+  DATA_LOADED: 'success.dataLoaded',
+  SEARCH_COMPLETED: 'success.searchCompleted'
 };
 
 // Loading messages
 export const LOADING_MESSAGES = {
-  SEARCHING: 'მოძებნა...',
-  LOADING: 'იტვირთება...',
-  VALIDATING: 'ამოწმდება...',
-  CONNECTING: 'სერვერთან დაკავშირება...'
+  SEARCHING: 'loading.searching',
+  LOADING: 'loading.loading',
+  VALIDATING: 'loading.validating',
+  CONNECTING: 'loading.connecting'
 };

@@ -76,7 +76,7 @@ export default function Index() {
                 lineHeight: TYPOGRAPHY.lineHeight.normal * TYPOGRAPHY.fontSize.sm,
                 fontWeight: TYPOGRAPHY.fontWeight.medium
               }}>
-                მნიშვნელოვანი: საჯარიმო ქვითარი პირისათვის ჩაბარებულად მიიჩნევა საჯაროდ გამოქვეყნებიდან 30-ე დღეს.
+                {t('home.importantNote')}
               </Text>
             </View>
           </View>
@@ -111,7 +111,7 @@ export default function Index() {
                 color: '#1a237e',
                 textAlign: 'center'
               }}>
-                ოფიციალური პლატფორმა
+                {t('home.officialPlatformTitle')}
               </Text>
             </View>
 
@@ -121,7 +121,7 @@ export default function Index() {
               lineHeight: TYPOGRAPHY.lineHeight.relaxed * TYPOGRAPHY.fontSize.base,
               textAlign: "center"
             }}>
-              ეს აპლიკაცია წარმოადგენს საქართველოს შინაგან საქმეთა სამინისტროს ოფიციალურ პლატფორმას ადმინისტრაციული ჯარიმების შესასწავლად.
+              {t('home.officialPlatformText')}
             </Text>
             
             <View style={{
@@ -136,7 +136,7 @@ export default function Index() {
               textAlign: "center",
               fontStyle: 'italic'
             }}>
-              ყველა ინფორმაცია რეალურ დროშია განახლებული
+              {t('home.realTimeInfo')}
             </Text>
           </View>
         </View>

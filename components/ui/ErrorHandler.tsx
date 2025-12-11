@@ -1,5 +1,5 @@
 import { ErrorState, LoadingState } from '@/types/api';
-import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 
 interface ErrorHandlerProps {
@@ -10,6 +10,8 @@ interface ErrorHandlerProps {
 }
 
 export function ErrorHandler({ errorState, loadingState, onRetry, onClear }: ErrorHandlerProps) {
+  const { t } = useTranslation();
+  
   if (loadingState.isLoading) {
     return (
       <View style={{
@@ -23,7 +25,7 @@ export function ErrorHandler({ errorState, loadingState, onRetry, onClear }: Err
         <ActivityIndicator size="small" color="#3B82F6" style={{ marginRight: 12 }} />
         <View style={{ flex: 1 }}>
           <Text style={{ color: '#1E40AF', fontWeight: '500' }}>
-            {loadingState.loadingMessage || 'იტვირთება...'}
+            {loadingState.loadingMessage || t('common.loading')}
           </Text>
           {loadingState.progress && (
             <View style={{

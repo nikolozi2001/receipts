@@ -1,24 +1,9 @@
+import { ERROR_MESSAGES, LOADING_MESSAGES } from '@/constants';
+import i18n from '@/i18n';
 import { apiService } from '@/services/api';
 import { ErrorState, LoadingState, ProtocolData, SearchFormData } from '@/types/api';
 import * as Haptics from 'expo-haptics';
 import { create } from 'zustand';
-
-// Loading and error messages inline to avoid import issues
-const LOADING_MESSAGES = {
-  SEARCHING: 'მოძებნა...',
-  LOADING: 'იტვირთება...',
-  VALIDATING: 'ამოწმდება...',
-  CONNECTING: 'სერვერთან დაკავშირება...'
-};
-
-const ERROR_MESSAGES = {
-  NETWORK_ERROR: 'ინტერნეტ კავშირი არ არის ხელმისაწვდომი',
-  SERVER_ERROR: 'სერვერთან კავშირის პრობლემა',
-  TIMEOUT_ERROR: 'მოთხოვნის დრო ამოიწურა',
-  INVALID_INPUT: 'შეიყვანეთ სწორი მონაცემები',
-  NO_DATA: 'მონაცემები არ მოიძებნა',
-  VALIDATION_ERROR: 'მონაცემების ვალიდაცია ვერ მოხერხდა'
-};
 
 interface AppState {
   // Protocol data
@@ -120,7 +105,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     
     setLoadingState({ 
       isLoading: true, 
-      loadingMessage: LOADING_MESSAGES.LOADING 
+      loadingMessage: i18n.t(LOADING_MESSAGES.LOADING) 
     });
     clearError();
     
@@ -144,7 +129,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
       set({ protocolData: { count: 0, results: [] } });
       setErrorState({
         hasError: true,
-        errorMessage: ERROR_MESSAGES.NETWORK_ERROR,
+        errorMessage: i18n.t(ERROR_MESSAGES.NETWORK_ERROR),
         canRetry: true,
         retryCount: 0
       });
@@ -163,7 +148,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     
     setLoadingState({ 
       isLoading: true, 
-      loadingMessage: LOADING_MESSAGES.SEARCHING 
+      loadingMessage: i18n.t(LOADING_MESSAGES.SEARCHING)
     });
     clearError();
     
@@ -226,7 +211,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
     
     setLoadingState({ 
       isLoading: true, 
-      loadingMessage: LOADING_MESSAGES.SEARCHING 
+      loadingMessage: i18n.t(LOADING_MESSAGES.SEARCHING)
     });
     clearError();
     

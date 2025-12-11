@@ -17,7 +17,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
   const { language, changeLanguage, isLoading } = useLanguage();
 
   const languages = [
-    { code: 'ka', label: 'ქართული', flag: '🇬🇪' },
+    { code: 'ka', label: 'Georgian', flag: '🇬🇪' },
     { code: 'en', label: 'English', flag: '🇺🇸' },
   ];
 
