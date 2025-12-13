@@ -13,6 +13,9 @@ import {
   View,
 } from "react-native";
 
+type MainMode = "video" | "receipts";
+type ReceiptMode = "lawbreaker" | "protocol";
+
 interface SearchFormProps {
   formData: SearchFormData;
   isLoading: boolean;
@@ -175,6 +178,170 @@ function CarSearchFields({ formData, onUpdateForm, t }: FieldsProps) {
   );
 }
 
+function LawBreakerSearchFields({ formData, onUpdateForm, t }: FieldsProps) {
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  // Initialize date from existing searchQuery or default to current date
+  const getInitialDate = () => {
+    if (formData.searchQuery) {
+      try {
+        const parts = formData.searchQuery.split(".");
+        if (parts.length === 3) {
+          const [day, month, year] = parts;
+          return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        }
+      } catch {
+        // Fallback to current date if parsing fails
+      }
+    }
+    return new Date();
+  };
+
+  const [selectedDate, setSelectedDate] = useState(getInitialDate);
+
+  const onDateChange = (event: any, date?: Date) => {
+    setShowDatePicker(Platform.OS === "ios");
+    if (date) {
+      setSelectedDate(date);
+      const formattedDate = date
+        .toLocaleDateString("ka-GE", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })
+        .replace(/\//g, ".");
+      onUpdateForm({ searchQuery: formattedDate });
+    }
+  };
+
+  const showDatePickerHandler = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setShowDatePicker(true);
+  };
+
+  return (
+    <View style={{ gap: 16 }}>
+      <View>
+        <TextInput
+          style={{
+            borderWidth: 1,
+            borderColor: "#d1d5db",
+            borderRadius: 6,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 16,
+            backgroundColor: "white",
+          }}
+          placeholder="პირადი ნომერი"
+          placeholderTextColor="#9ca3af"
+          value={formData.receiptNumber}
+          onChangeText={(text) => onUpdateForm({ receiptNumber: text })}
+          autoCapitalize="none"
+        />
+      </View>
+
+      <View>
+        <TextInput
+          style={{
+            borderWidth: 1,
+            borderColor: "#d1d5db",
+            borderRadius: 6,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 16,
+            backgroundColor: "white",
+          }}
+          placeholder="დოკუმენტის ნომერი"
+          placeholderTextColor="#9ca3af"
+          value={formData.merchantName}
+          onChangeText={(text) => onUpdateForm({ merchantName: text })}
+        />
+      </View>
+
+      <View>
+        <TouchableOpacity
+          style={{
+            borderWidth: 1,
+            borderColor: "#d1d5db",
+            borderRadius: 6,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            backgroundColor: "white",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+          onPress={showDatePickerHandler}
+        >
+          <Text
+            style={{
+              fontSize: 16,
+              color: formData.searchQuery ? "#000" : "#9ca3af",
+            }}
+          >
+            {formData.searchQuery || "დაბადების თარიღი"}
+          </Text>
+          <Ionicons name="calendar" size={20} color="#9ca3af" />
+        </TouchableOpacity>
+
+        {showDatePicker && (
+          <DateTimePicker
+            value={selectedDate}
+            mode="date"
+            display={Platform.OS === "ios" ? "spinner" : "default"}
+            onChange={onDateChange}
+            maximumDate={new Date()}
+          />
+        )}
+      </View>
+    </View>
+  );
+}
+
+function ProtocolSearchFields({ formData, onUpdateForm, t }: FieldsProps) {
+  return (
+    <View style={{ gap: 16 }}>
+      <View>
+        <TextInput
+          style={{
+            borderWidth: 1,
+            borderColor: "#d1d5db",
+            borderRadius: 6,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 16,
+            backgroundColor: "white",
+          }}
+          placeholder="პირადი/დოკუმენტის/საიდენტიფიკაციო ნომერი"
+          placeholderTextColor="#9ca3af"
+          value={formData.receiptNumber}
+          onChangeText={(text) => onUpdateForm({ receiptNumber: text })}
+          autoCapitalize="none"
+        />
+      </View>
+
+      <View>
+        <TextInput
+          style={{
+            borderWidth: 1,
+            borderColor: "#d1d5db",
+            borderRadius: 6,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+            fontSize: 16,
+            backgroundColor: "white",
+          }}
+          placeholder="ქვითრის ნომერი"
+          placeholderTextColor="#9ca3af"
+          value={formData.merchantName}
+          onChangeText={(text) => onUpdateForm({ merchantName: text })}
+          autoCapitalize="none"
+        />
+      </View>
+    </View>
+  );
+}
+
 export function SearchForm({
   formData,
   isLoading,
@@ -186,8 +353,24 @@ export function SearchForm({
   onRetry,
   clearError,
 }: SearchFormProps) {
+  const [mainMode, setMainMode] = useState<MainMode>("video");
+  const [receiptMode, setReceiptMode] = useState<ReceiptMode>("protocol");
+
   const canSearch = () => {
-    if (formData.searchMode === "car") {
+    if (mainMode === "receipts") {
+      if (receiptMode === "protocol") {
+        return (
+          formData.receiptNumber.trim().length > 0 &&
+          formData.merchantName.trim().length > 0
+        );
+      } else {
+        return (
+          formData.receiptNumber.trim().length > 0 &&
+          formData.merchantName.trim().length > 0 &&
+          formData.searchQuery.trim().length > 0
+        );
+      }
+    } else if (formData.searchMode === "car") {
       return formData.carPlate.trim().length > 0;
     } else {
       return (
@@ -225,25 +408,27 @@ export function SearchForm({
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "#1a237e",
+            backgroundColor: mainMode === "video" ? "#1a237e" : "transparent",
+            borderWidth: mainMode === "video" ? 0 : 1,
+            borderColor: "#1a237e",
             paddingVertical: 10,
             paddingHorizontal: 12,
             borderRadius: 6,
           }}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            // Already active - video fines
+            setMainMode("video");
           }}
         >
           <Ionicons
             name="videocam"
             size={20}
-            color="white"
+            color={mainMode === "video" ? "white" : "#1a237e"}
             style={{ marginRight: 8 }}
           />
           <Text
             style={{
-              color: "white",
+              color: mainMode === "video" ? "white" : "#1a237e",
               fontWeight: "600",
               fontSize: 14,
             }}
@@ -259,8 +444,8 @@ export function SearchForm({
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "transparent",
-            borderWidth: 1,
+            backgroundColor: mainMode === "receipts" ? "#1a237e" : "transparent",
+            borderWidth: mainMode === "receipts" ? 0 : 1,
             borderColor: "#1a237e",
             paddingVertical: 10,
             paddingHorizontal: 12,
@@ -268,18 +453,18 @@ export function SearchForm({
           }}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            // Switch to receipts mode
+            setMainMode("receipts");
           }}
         >
           <Ionicons
             name="receipt"
             size={20}
-            color="#1a237e"
+            color={mainMode === "receipts" ? "white" : "#1a237e"}
             style={{ marginRight: 8 }}
           />
           <Text
             style={{
-              color: "#1a237e",
+              color: mainMode === "receipts" ? "white" : "#1a237e",
               fontWeight: "600",
               fontSize: 14,
             }}
@@ -367,90 +552,188 @@ export function SearchForm({
       >
         <View style={{ padding: 24 }}>
           {/* Search Method Tabs */}
-          <View
-            style={{
-              flexDirection: "row",
-              backgroundColor: "white",
-              marginBottom: 20,
-              borderBottomWidth: 1,
-              borderBottomColor: "#e5e5e5",
-            }}
-          >
-            <TouchableOpacity
+          {mainMode === "receipts" ? (
+            <View
               style={{
-                flex: 1,
                 flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                paddingVertical: 12,
-                paddingHorizontal: 16,
-                borderBottomWidth: 2,
-                borderBottomColor:
-                  formData.searchMode === "personal"
-                    ? "#1a237e"
-                    : "transparent",
-              }}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                onUpdateForm({ searchMode: "personal" });
+                backgroundColor: "white",
+                marginBottom: 20,
+                borderBottomWidth: 1,
+                borderBottomColor: "#e5e5e5",
               }}
             >
-              <Ionicons
-                name="person"
-                size={18}
-                color={formData.searchMode === "personal" ? "#1a237e" : "#666"}
-                style={{ marginRight: 8 }}
-              />
-              <Text
+              <TouchableOpacity
                 style={{
-                  color:
-                    formData.searchMode === "personal" ? "#1a237e" : "#666",
-                  fontWeight:
-                    formData.searchMode === "personal" ? "600" : "500",
-                  fontSize: 14,
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  borderBottomWidth: 2,
+                  borderBottomColor:
+                    receiptMode === "lawbreaker"
+                      ? "#1a237e"
+                      : "transparent",
+                }}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setReceiptMode("lawbreaker");
                 }}
               >
-                {t("search.personalData")}
-              </Text>
-            </TouchableOpacity>
+                <Ionicons
+                  name="person"
+                  size={18}
+                  color={receiptMode === "lawbreaker" ? "#1a237e" : "#666"}
+                  style={{ marginRight: 8 }}
+                />
+                <Text
+                  style={{
+                    color:
+                      receiptMode === "lawbreaker" ? "#1a237e" : "#666",
+                    fontWeight:
+                      receiptMode === "lawbreaker" ? "600" : "500",
+                    fontSize: 14,
+                  }}
+                >
+                  სამართალდამრღვევი
+                </Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                paddingVertical: 12,
-                paddingHorizontal: 16,
-                borderBottomWidth: 2,
-                borderBottomColor:
-                  formData.searchMode === "car" ? "#1a237e" : "transparent",
-              }}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                onUpdateForm({ searchMode: "car" });
-              }}
-            >
-              <Ionicons
-                name="car"
-                size={18}
-                color={formData.searchMode === "car" ? "#1a237e" : "#666"}
-                style={{ marginRight: 8 }}
-              />
-              <Text
+              <TouchableOpacity
                 style={{
-                  color: formData.searchMode === "car" ? "#1a237e" : "#666",
-                  fontWeight: formData.searchMode === "car" ? "600" : "500",
-                  fontSize: 14,
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  borderBottomWidth: 2,
+                  borderBottomColor:
+                    receiptMode === "protocol" ? "#1a237e" : "transparent",
+                }}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setReceiptMode("protocol");
                 }}
               >
-                {t("search.vehicleData")}
-              </Text>
-            </TouchableOpacity>
-          </View>
+                <Ionicons
+                  name="receipt"
+                  size={18}
+                  color={receiptMode === "protocol" ? "#1a237e" : "#666"}
+                  style={{ marginRight: 8 }}
+                />
+                <Text
+                  style={{
+                    color: receiptMode === "protocol" ? "#1a237e" : "#666",
+                    fontWeight: receiptMode === "protocol" ? "600" : "500",
+                    fontSize: 14,
+                  }}
+                >
+                  ოქმი
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View
+              style={{
+                flexDirection: "row",
+                backgroundColor: "white",
+                marginBottom: 20,
+                borderBottomWidth: 1,
+                borderBottomColor: "#e5e5e5",
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  borderBottomWidth: 2,
+                  borderBottomColor:
+                    formData.searchMode === "personal"
+                      ? "#1a237e"
+                      : "transparent",
+                }}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  onUpdateForm({ searchMode: "personal" });
+                }}
+              >
+                <Ionicons
+                  name="person"
+                  size={18}
+                  color={formData.searchMode === "personal" ? "#1a237e" : "#666"}
+                  style={{ marginRight: 8 }}
+                />
+                <Text
+                  style={{
+                    color:
+                      formData.searchMode === "personal" ? "#1a237e" : "#666",
+                    fontWeight:
+                      formData.searchMode === "personal" ? "600" : "500",
+                    fontSize: 14,
+                  }}
+                >
+                  {t("search.personalData")}
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  borderBottomWidth: 2,
+                  borderBottomColor:
+                    formData.searchMode === "car" ? "#1a237e" : "transparent",
+                }}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  onUpdateForm({ searchMode: "car" });
+                }}
+              >
+                <Ionicons
+                  name="car"
+                  size={18}
+                  color={formData.searchMode === "car" ? "#1a237e" : "#666"}
+                  style={{ marginRight: 8 }}
+                />
+                <Text
+                  style={{
+                    color: formData.searchMode === "car" ? "#1a237e" : "#666",
+                    fontWeight: formData.searchMode === "car" ? "600" : "500",
+                    fontSize: 14,
+                  }}
+                >
+                  {t("search.vehicleData")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           {/* Form Fields */}
-          {formData.searchMode === "personal" ? (
+          {mainMode === "receipts" ? (
+            receiptMode === "lawbreaker" ? (
+              <LawBreakerSearchFields
+                formData={formData}
+                onUpdateForm={onUpdateForm}
+                t={t}
+              />
+            ) : (
+              <ProtocolSearchFields
+                formData={formData}
+                onUpdateForm={onUpdateForm}
+                t={t}
+              />
+            )
+          ) : formData.searchMode === "personal" ? (
             <PersonalSearchFields
               formData={formData}
               onUpdateForm={onUpdateForm}
