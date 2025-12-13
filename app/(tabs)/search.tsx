@@ -12,6 +12,7 @@ export default function Search() {
     loadingState,
     errorState,
     searchForm,
+    lastSearchType,
     updateSearchForm,
     handleSearch,
     handleClear,
@@ -41,13 +42,15 @@ export default function Search() {
           clearError={clearError}
         />
 
-        {((searchForm.searchMode === 'car' && searchForm.carPlate.trim().length > 0) || 
-          (searchForm.searchMode === 'personal' && searchForm.receiptNumber.trim().length > 0)) && (
+        {(((searchForm.searchMode === 'car' && searchForm.carPlate.trim().length > 0) || 
+          (searchForm.searchMode === 'personal' && searchForm.receiptNumber.trim().length > 0)) ||
+          (lastSearchType && (lastSearchType === 'receipt-lawbreaker' || lastSearchType === 'receipt-protocol') && searchForm.receiptNumber.trim().length > 0)) && (
           <ResultsTable
             protocolData={protocolData}
             isLoading={isLoading}
             searchMode={searchForm.searchMode}
             hasSearchQuery={hasSearchQuery(searchForm)}
+            searchType={lastSearchType || undefined}
           />
         )}
 

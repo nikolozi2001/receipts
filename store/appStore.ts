@@ -18,6 +18,9 @@ interface AppState {
   // Search form data
   searchForm: SearchFormData;
   
+  // Last search type for results display
+  lastSearchType: 'video-personal' | 'video-car' | 'receipt-lawbreaker' | 'receipt-protocol' | null;
+  
   // Actions
   setProtocolData: (data: ProtocolData | null) => void;
   setLoadingState: (state: Partial<LoadingState>) => void;
@@ -30,6 +33,7 @@ interface AppState {
   fetchAllProtocols: () => Promise<void>;
   searchByCarNumber: (carNumber: string) => Promise<void>;
   searchByPersonalData: (personalId: string, surname: string, birthDate: string) => Promise<void>;
+  searchLawBreaker: (personalNo: string, documentNo: string, birthDate: string) => Promise<void>;
   retryLastSearch: () => Promise<void>;
   
   // Legacy getters for backward compatibility
@@ -63,6 +67,7 @@ export const useAppStore = create<AppState>()((set, get) => ({
   },
   
   searchForm: initialSearchForm,
+  lastSearchType: null,
   
   // Legacy getters
   get error() {
@@ -269,6 +274,75 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }
   },
   
+  searchLawBreaker: async (personalNo: string, documentNo: string, birthDate: string) => {
+    console.log('AppStore searchLawBreaker - Called with:', { personalNo, documentNo, birthDate });
+    const { setLoadingState, setErrorState, clearError } = get();
+    
+    // Set the search type
+    set({ lastSearchType: 'receipt-lawbreaker' });
+    
+    setLoadingState({ 
+      isLoading: true, 
+      loadingMessage: i18n.t(LOADING_MESSAGES.SEARCHING)
+    });
+    clearError();
+    
+    try {
+      console.log('AppStore searchLawBreaker - Starting API call...');
+      // Ensure minimum loading time of 500ms for better UX
+      const [response] = await Promise.all([
+        apiService.searchLawBreaker(personalNo, documentNo, birthDate),
+        new Promise(resolve => setTimeout(resolve, 500))
+      ]);
+      console.log('AppStore searchLawBreaker - API response:', response);
+      if (response.success) {
+        set({ protocolData: response.data });
+        
+        // Add success haptic feedback
+        if (response.data && response.data.results && response.data.results.length > 0) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        } else {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        }
+        
+        // Show success message briefly
+        if (response.message) {
+          setErrorState({
+            hasError: false,
+            errorMessage: response.message,
+            canRetry: false,
+            retryCount: 0
+          });
+          // Clear message after 3 seconds
+          setTimeout(() => {
+            get().clearError();
+          }, 3000);
+        }
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        set({ protocolData: { count: 0, results: [] } });
+        setErrorState({
+          hasError: true,
+          errorMessage: response.message || ERROR_MESSAGES.NO_DATA,
+          canRetry: true,
+          retryCount: 0
+        });
+      }
+    } catch (error) {
+      console.error('Law breaker search failed:', error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      set({ protocolData: { count: 0, results: [] } });
+      setErrorState({
+        hasError: true,
+        errorMessage: ERROR_MESSAGES.NETWORK_ERROR,
+        canRetry: true,
+        retryCount: 0
+      });
+    } finally {
+      setLoadingState({ isLoading: false, loadingMessage: '' });
+    }
+  },
+
   retryLastSearch: async () => {
     const { searchForm, errorState } = get();
     

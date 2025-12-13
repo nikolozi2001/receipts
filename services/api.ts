@@ -9,7 +9,8 @@ const RETRY_ATTEMPTS = 3;
 const ENDPOINTS = {
   CAR_SEARCH: '/api/receipt-by-car',
   PERSONAL_SEARCH: '/api/receipt-by-person',
-  ALL_PROTOCOLS: '/api/protocols'
+  ALL_PROTOCOLS: '/api/protocols',
+  LAW_BREAKER_SEARCH: '/api/search-law-breaker'
 };
 
 class ApiService {
@@ -168,7 +169,7 @@ class ApiService {
         console.log('✅ No violations found for car:', cleanCarNumber);
         return {
           success: true,
-          message: `✅ ${i18n.t('search.results.noViolationsCar')}`,
+          message: '✅ ჯარიმები არ არის',
           data: { count: 0, results: [] }
         };
       }
@@ -270,6 +271,89 @@ class ApiService {
     
     // If not successful, return the error response
     console.log('❌ Personal search failed:', response.message);
+    return response;
+  }
+
+  async searchLawBreaker(personalNo: string, documentNo: string, birthDate: string): Promise<ApiResponse> {
+    // Validate inputs
+    if (!personalNo || !personalNo.trim()) {
+      return {
+        success: false,
+        message: 'შეიყვანეთ პირადი ნომერი',
+        data: { count: 0, results: [] }
+      };
+    }
+    
+    if (!documentNo || !documentNo.trim()) {
+      return {
+        success: false,
+        message: 'შეიყვანეთ დოკუმენტის ნომერი',
+        data: { count: 0, results: [] }
+      };
+    }
+    
+    if (!birthDate || !birthDate.trim()) {
+      return {
+        success: false,
+        message: 'შეიყვანეთ დაბადების თარიღი',
+        data: { count: 0, results: [] }
+      };
+    }
+    
+    // Validate personal ID format (Georgian personal ID is 11 digits)
+    const cleanPersonalNo = personalNo.trim();
+    if (!/^\d{11}$/.test(cleanPersonalNo)) {
+      return {
+        success: false,
+        message: 'პირადი ნომერი უნდა შეიცავდეს 11 ციფრს',
+        data: { count: 0, results: [] }
+      };
+    }
+    
+    // Validate birth date format (DD.MM.YYYY)
+    const cleanBirthDate = birthDate.trim();
+    if (!/^\d{2}\.\d{2}\.\d{4}$/.test(cleanBirthDate)) {
+      return {
+        success: false,
+        message: 'დაბადების თარიღი უნდა იყოს ფორმატში: DD.MM.YYYY',
+        data: { count: 0, results: [] }
+      };
+    }
+    
+    console.log('Searching law breaker:', { 
+      lawBreakerDocumentNo: cleanPersonalNo, 
+      lawBreakerSubDocumentNo: documentNo.trim(), 
+      lawBreakerBirthDate: cleanBirthDate 
+    });
+    
+    const url = `${API_BASE_URL}${ENDPOINTS.LAW_BREAKER_SEARCH}?lawBreakerDocumentNo=${encodeURIComponent(cleanPersonalNo)}&lawBreakerSubDocumentNo=${encodeURIComponent(documentNo.trim())}&lawBreakerBirthDate=${encodeURIComponent(cleanBirthDate)}`;
+    console.log('Using API URL:', url);
+    
+    const response = await this.makeRequest(url, {
+      method: 'GET'
+    });
+    
+    // Check if this is a "no data found" response (success with no results)
+    if (response.success && response.data) {
+      if (response.data.results && response.data.results.length > 0) {
+        console.log('✅ Found', response.data.results.length, 'law breaker records');
+        return {
+          success: true,
+          message: `${i18n.t(SUCCESS_MESSAGES.SEARCH_COMPLETED)} - ${i18n.t('search.results.found', { defaultValue: 'Found {{count}} records', count: response.data.results.length })}`,
+          data: response.data
+        };
+      } else {
+        console.log('✅ No law breaker records found');
+        return {
+          success: true,
+          message: '✅ სამართალდარღვევა არ მოიძებნა',
+          data: { count: 0, results: [] }
+        };
+      }
+    }
+    
+    // If not successful, return the error response
+    console.log('❌ Law breaker search failed:', response.message);
     return response;
   }
 }

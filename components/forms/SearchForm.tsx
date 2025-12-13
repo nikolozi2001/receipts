@@ -22,7 +22,7 @@ interface SearchFormProps {
   loadingState: LoadingState;
   errorState: ErrorState;
   onUpdateForm: (updates: Partial<SearchFormData>) => void;
-  onSearch: () => void;
+  onSearch: (searchType?: 'video-personal' | 'video-car' | 'receipt-lawbreaker' | 'receipt-protocol') => void;
   onClear: () => void;
   onRetry?: () => void;
   clearError?: () => void;
@@ -384,7 +384,36 @@ export function SearchForm({
   const handleSearch = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     clearError?.();
-    onSearch();
+    
+    let searchType: 'video-personal' | 'video-car' | 'receipt-lawbreaker' | 'receipt-protocol';
+    
+    console.log('SearchForm handleSearch - mainMode:', mainMode, 'receiptMode:', receiptMode);
+    console.log('SearchForm handleSearch - formData:', {
+      receiptNumber: formData.receiptNumber,
+      merchantName: formData.merchantName,
+      searchQuery: formData.searchQuery
+    });
+    
+    if (mainMode === "receipts") {
+      if (receiptMode === "lawbreaker") {
+        searchType = 'receipt-lawbreaker';
+        console.log('SearchForm handleSearch - Using receipt-lawbreaker search type');
+      } else {
+        searchType = 'receipt-protocol';
+        console.log('SearchForm handleSearch - Using receipt-protocol search type');
+      }
+    } else {
+      if (formData.searchMode === "car") {
+        searchType = 'video-car';
+        console.log('SearchForm handleSearch - Using video-car search type');
+      } else {
+        searchType = 'video-personal';
+        console.log('SearchForm handleSearch - Using video-personal search type');
+      }
+    }
+    
+    console.log('SearchForm handleSearch - Calling onSearch with type:', searchType);
+    onSearch(searchType);
   };
 
   const { t } = useTranslation();
@@ -515,6 +544,30 @@ export function SearchForm({
               </Text>
             </TouchableOpacity>
           )}
+        </View>
+      )}
+
+      {/* Success Message Display */}
+      {!errorState.hasError && errorState.errorMessage && (
+        <View
+          style={{
+            marginBottom: 16,
+            padding: 16,
+            backgroundColor: "#f0f9ff",
+            borderLeftWidth: 3,
+            borderLeftColor: "#0ea5e9",
+            borderRadius: 4,
+          }}
+        >
+          <Text
+            style={{
+              color: "#0c4a6e",
+              fontSize: 14,
+              lineHeight: 20,
+            }}
+          >
+            {errorState.errorMessage}
+          </Text>
         </View>
       )}
 

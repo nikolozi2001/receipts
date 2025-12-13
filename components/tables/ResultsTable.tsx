@@ -11,9 +11,10 @@ interface ResultsTableProps {
   isLoading: boolean;
   searchMode: 'personal' | 'car';
   hasSearchQuery: boolean;
+  searchType?: 'video-personal' | 'video-car' | 'receipt-lawbreaker' | 'receipt-protocol';
 }
 
-export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQuery }: ResultsTableProps) {
+export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQuery, searchType }: ResultsTableProps) {
   const { t } = useTranslation();
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
@@ -28,14 +29,28 @@ export function ResultsTable({ protocolData, isLoading, searchMode, hasSearchQue
     setExpandedRows(newExpanded);
   };
 
+  const getNoResultsMessage = () => {
+    if (searchType === 'receipt-lawbreaker') {
+      return 'სამართალდარღვევა არ მოიძებნა';
+    } else if (searchType === 'receipt-protocol') {
+      return 'მონაცემები არ მოიძებნა';
+    } else if (searchType === 'video-car') {
+      return 'ჯარიმები არ არის';
+    } else {
+      return t('search.results.noViolations');
+    }
+  };
+
   const renderEmptyState = () => {
     if (protocolData?.results?.length === 0) {
       return (
         <View style={{ paddingVertical: 32, alignItems: 'center' }}>
           <Ionicons name="checkmark-circle" size={48} color={COLORS.success[500]} style={{marginBottom: 12}} />
-          <Text style={{ color: COLORS.success[600], fontSize: 16, fontWeight: '600', marginBottom: 8 }}>{t('search.results.noViolations')}</Text>
+          <Text style={{ color: COLORS.success[600], fontSize: 16, fontWeight: '600', marginBottom: 8 }}>{getNoResultsMessage()}</Text>
           <Text style={{ color: '#6b7280', textAlign: 'center', paddingHorizontal: 24, fontSize: 14 }}>
-            {searchMode === 'car' 
+            {searchType === 'receipt-lawbreaker' 
+              ? 'მითითებული მონაცემებით სამართალდარღვევა ვერ მოიძებნა'
+              : searchMode === 'car' 
               ? t('search.results.noViolationsCar')
               : t('search.results.noViolationsPersonal')
             }
